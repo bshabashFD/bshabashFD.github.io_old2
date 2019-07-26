@@ -5,4 +5,4 @@ google_analytics:
 theme: jekyll-theme-architect
 
 #avatar: https://raw.githubusercontent.com/barryclark/jekyll-now/master/images/jekyll-logo.png
-avatar: asstes/images/logo.png
+avatar: /assets/images/logo.png
