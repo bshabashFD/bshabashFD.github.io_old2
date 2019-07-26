@@ -4,4 +4,5 @@ show_downloads: true
 google_analytics:
 theme: jekyll-theme-architect
 
-avatar: https://raw.githubusercontent.com/barryclark/jekyll-now/master/images/jekyll-logo.png
+#avatar: https://raw.githubusercontent.com/barryclark/jekyll-now/master/images/jekyll-logo.png
+avatar: logo.png
