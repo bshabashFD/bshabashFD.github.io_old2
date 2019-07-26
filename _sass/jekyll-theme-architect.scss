@@ -450,7 +450,8 @@ footer a:hover {
 }
 
 nav {
-  float: right;
+  float: center;
+  margin-left: 23px;
   margin-top: 23px; // @TODO: Vertically middle align
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 18px;
