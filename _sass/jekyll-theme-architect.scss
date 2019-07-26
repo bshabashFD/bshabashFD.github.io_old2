@@ -452,7 +452,7 @@ footer a:hover {
 nav {
   float: center;
   margin-top: 23px; // @TODO: Vertically middle align
-  font-family: $helveticaNeue;
+  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 18px;
 
   @include mobile {
