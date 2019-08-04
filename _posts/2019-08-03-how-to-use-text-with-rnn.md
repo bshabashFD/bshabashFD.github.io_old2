@@ -259,7 +259,7 @@ def get_text_from_model(model, test_input, output_size=150):
     return test_input
 ```
 
-This function basically takes our model, a seed input, and a length, and produces an output of that length with our seed input as the initial set of characters. You can see later on how this works.
+This function basically takes our model, a seed input, and a length, and produces an output of that length with our seed input as the initial set of characters. You can see later how this works.
 
 Let’s train our model!
 
