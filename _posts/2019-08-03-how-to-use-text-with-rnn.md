@@ -3,9 +3,9 @@ layout: post
 title: Employing Recurrent Neural Networks for Text Generation
 ---
 
-Recurrent Neural Networks (RNNs) are naturally designed to process sequences and extract patterns from them. Unlike Feed-Forward NNs which accept simply a collection of inputs as features, RNNs can pay attention to the order of the inputs coming in, and as such are often used to explore patterns through time or through any naturally occuring sequence.
+Recurrent Neural Networks (RNNs) are naturally designed to process sequences and extract patterns from them. Unlike Feed-Forward NNs which accept simply a collection of inputs as features, RNNs can pay attention to the order of the inputs coming in, and as such are often used to explore patterns through time or through any naturally occurring sequence.
 
-In this post, we'll explore how to employ RNNs for text processing and generation, and we'll be using [TensorFlow](https://www.tensorflow.org/install) and its Keras API. This post is loosly based on the tutorial at https://www.tensorflow.org/beta/tutorials/text/text_generation
+In this post, we'll explore how to employ RNNs for text processing and generation, and we'll be using [TensorFlow](https://www.tensorflow.org/install) and its Keras API. This post is loosely based on the tutorial at https://www.tensorflow.org/beta/tutorials/text/text_generation
 
 ## Phase 1: Obtain the data
 
@@ -66,7 +66,7 @@ Is't a verdict?
 All:
 No more talking on't; let it 
 ```
-Ahhh, that's nice, some works of William Shakspeare. I'm not sure if it's all of them (he did write a lot), but we have The Tragedy of Coriolanus, and The Tempest, to name a few, in there.
+Ahhh, that's nice, some works of William Shakespeare. I'm not sure if it's all of them (he did write a lot), but we have The Tragedy of Coriolanus, and The Tempest, to name a few, in there.
 
 Now that we have the data, what can we do with it?
 
@@ -81,8 +81,4 @@ let's define our string length to be 100
 ```python
 seq_length = 100
 ```
-
-# Phase 3: Pre-process our data:
-
-
 
