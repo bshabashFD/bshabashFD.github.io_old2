@@ -38,7 +38,7 @@ print('length of text: {} chars'.format(len(text)))
 vocab = sorted(set(text))
 print('{} unique chars'.format(len(vocab)))
 
-print(text[:100])
+print(text[:400])
 ```
 ```
 length of text: 1115394 chars
