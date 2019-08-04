@@ -335,7 +335,7 @@ By the end of the first epoch, our model learned the syntax for Shakespearean wr
 Furthermore, since we parsed our text as a set of characters, we can even give our model names and words which do not appear in the text, and it can handle them.
 
 ```python
-print(get_text_from_model(model, “BORIS THE BLADE:”, output_size=450))
+print(get_text_from_model(model, "BORIS THE BLADE:", output_size=450))
 ```
 ```
 BORIS THE BLADE:
