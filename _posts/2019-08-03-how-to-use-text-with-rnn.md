@@ -194,13 +194,10 @@ Let’s build our Recurrent Neural Network:
 model = Sequential()
 
 model.add(Embedding(len(vocab), 25, input_length=seq_length))
-
 model.add(LSTM(1024))
-
 model.add(Dense(len(vocab), activation='softmax'))
 
 
-sgd = tf.keras.optimizers.SGD(lr=0.01, decay=0.0, momentum=0.0, nesterov=False, clipnorm=2.0)
 model.compile(loss='sparse_categorical_crossentropy', 
               optimizer='adam')
 
@@ -230,3 +227,133 @@ Then, we have a 1024 neuron LSTM layer, it takes the 100X25 matrix and produces 
 The final layer is a simple layer of 65 neurons, who each take the 1024-long output of the 2nd layer, and outputs a number from 0.0-1.0. Each of the 65 final neurons correspond to one of the 65 characters, so each i-th neuron outputs the probability the output character for the input sequence is character i (i.e. neuron 0 outputs the probability the next character in the sequence is character 0, neuron 1 outputs the probability the next character in the sequence is character 1, etc’).
 
 Once the model is declared, we compile it to bring it to life, and we output the summary to get an idea of our model’s architecture.
+
+## Phase 5: Training and Testing
+
+We will train our RNN for 5 epochs, which means it will look at the data 5 times, but to save our poor RAM memory from exploding, we will do so in batches of 480. This means we will divide out dataset into chunks of 480 data points, and show each chunk to the model. Once all chunks have been shown, we will call it an epoch. We’ll then repeat the process 4 more times.
+
+However, after each epoch, we’d like to see what the model has learned, so let’s define a function that will take out model, an input set of characters, and produce an output of a given size:
+
+```python
+def get_text_from_model(model, test_input, output_size=150):
+    
+    combined_text = test_input+""
+    
+    for i in range(output_size):
+        if (len(test_input) > seq_length):
+            padded_test_input = test_input[-seq_length:]
+        else:
+            padded_test_input = ("\n" * (seq_length - len(test_input))) + test_input
+        text_as_int = np.array([char2idx[c] for c in padded_test_input])
+        text_as_int = text_as_int.reshape((1, seq_length))
+
+        y_predict_proba = model.predict(text_as_int)[0]
+        y_id = np.random.choice(list(range(len(vocab))), size=1, p=y_predict_proba)[0]
+
+        y_char = idx2char[y_id]
+        test_input = test_input+y_char
+
+    return test_input
+```
+
+This function basically takes our model, a seed input, and a length, and produces an output of that length with our seed input as the initial set of characters. You can see later on how this works.
+
+Let’s train our model!
+
+```python
+EPOCHS = 5       # NNs operate in epochs, meaning this is how many times the neural network will go 
+                 # through the entire data
+BATCH_SIZE = 480   # at each epoch, it will split the data into units of 48 samples, and train on those
+
+
+for i in range(1, EPOCHS+1):
+  print("EPOCH: ",i)
+  X_data_np, y_data_np = shuffle_data(X_data_np, y_data_np)
+  model.fit(X_data_np, y_data_np,
+            batch_size=BATCH_SIZE,
+            epochs=1)
+
+  test_input = "ROMEO:"
+  print(get_text_from_model(model, test_input, output_size=150))
+  print("------------")
+```
+
+```
+EPOCH:  1
+1115294/1115294 [==============================] - 1607s 1ms/sample - loss: 1.9394
+ROMEO:
+Glatue to formo, leave out his brote;
+upen on our fows unkinged woald them guxs:
+To seak him frush no let dive; if I reved,
+And then shaked these apa
+------------
+EPOCH:  2
+1115294/1115294 [==============================] - 1607s 1ms/sample - loss: 1.3957
+ROMEO:
+As I beseece you, or fault! when I
+I envy behold their hopys: Lord and Warwick.
+
+GLOUCESTER:
+From your brother lave him now, my his lady!
+
+ROMEO:
+Sti
+------------
+EPOCH:  3
+1115294/1115294 [==============================] - 1603s 1ms/sample - loss: 1.2605
+ROMEO:
+What else?
+
+CAMILLO:
+Negely Aniinally, sir; for I mis-again!
+Above the woman's head, dissoluted.
+
+AUTOLYCUS:
+Where is thou didst give madifest neiver
+------------
+EPOCH:  4
+1115294/1115294 [==============================] - 1604s 1ms/sample - loss: 1.1743
+ROMEO:
+Fhonesty to guess? I have not what you were,
+A fair suit doth call them by Mowbray at the house
+And right in grief discharge the fay.
+
+MERCUTIO:
+hang
+------------
+EPOCH:  5
+1115294/1115294 [==============================] - 1602s 1ms/sample - loss: 1.1038
+ROMEO:
+Camillo, and your arms is lie again:
+Good Cape to me--I warn't it ten.
+Poor horte, and you conjused your honour,
+Before I shall dispose you. True and
+------------
+```
+
+By the end of the first epoch, our model learned the syntax for Shakespearean writing, but it still produces some garbage language with only short words resembling English (even Shakespearean English). However, by the end of epoch 5, our model produces mostly coherent words. 
+Furthermore, since we parsed our text as a set of characters, we can even give our model names and words which do not appear in the text, and it can handle them.
+
+```python
+print(get_text_from_model(model, “BORIS THE BLADE:”, output_size=450))
+```
+```
+BORIS THE BLADE:
+Ay, woes of Warwick, an oft fair assembly,
+Pursued fearful my mind meh spake my life.
+
+GLOUCESTER:
+Harly, weep sin, at it is nearer to them;
+And call thee mine:
+To deep return faces and less to his eyes;
+I speak 't up, when leave for sway again,
+Our whole pregisidens upages him with the king's.
+I'll tell wayer, every grievours his revenge
+And Juliet by my fair promagation
+Not kill me are upon your own is death?
+And I hot spite the over-mouth to 
+```
+
+Well, there we have it. We could probably train our model further and make it produce more and more English like text, but let’s stop and think for a second, do we really need to generate our text character by character? We can actually make the process much easier for out model and simply split the text into individual words rather than individual characters. 
+In my next post, I will present the way to generate our text using a word-by-word split rather than a character-by-character split.
+
