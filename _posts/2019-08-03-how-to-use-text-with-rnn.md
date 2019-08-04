@@ -360,3 +360,4 @@ In my next post, I will present a way to generate our text using a word-by-word 
 
 <a href="_notebooks/how-to-use-text-with-rnn.ipynb" >Download as an .ipynb Jupyter Notebook</a>
 
+[Download as an .ipynb Jupyter Notebook](/_notebooks/how-to-use-text-with-rnn.ipynb)
