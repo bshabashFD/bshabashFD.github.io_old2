@@ -7,7 +7,7 @@ image: writing-logo.png
 
 Recurrent Neural Networks (RNNs) are naturally designed to process sequences and extract patterns from them. Unlike Feed-Forward NNs which accept simply a collection of inputs as features, RNNs can pay attention to the order of the inputs coming in, and as such are often used to explore patterns through time or through any naturally occurring sequence.
 
-In this post, we'll explore how to employ RNNs for text processing and generation, and we'll be using [TensorFlow](https://www.tensorflow.org/install) and its [Keras](https://keras.io/) API. This post is loosely based on the tutorial at https://www.tensorflow.org/beta/tutorials/text/text_generation
+In this post, we'll explore how to employ RNNs for text processing and generation, and we'll be using [TensorFlow](https://www.tensorflow.org/install) and its [Keras](https://keras.io/) API. This post is loosely based on the tutorial at [https://www.tensorflow.org/beta/tutorials/text/text_generation](https://www.tensorflow.org/beta/tutorials/text/text_generation)
 
 ## Phase 1: Obtain the data
 
