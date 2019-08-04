@@ -82,3 +82,103 @@ let's define our string length to be 100
 seq_length = 100
 ```
 
+# Phase 3: Pre-process our data:
+
+RNNs, and really all machine learning methods, can only accept numbers as inputs, so we need first to number'ify our text. What this means is that we will assign every character to a number, and also have a way of converting those numbers back to characters
+
+```python
+# dictionary comprehension, assign every character to a number from 0-64
+char2idx = {u:i for i, u in enumerate(vocab)}
+idx2char = np.array(vocab)
+
+# let’s check our text after it’s been transformed into numbers
+text_as_int = np.array([char2idx[c] for c in text])
+print(text_as_int)
+```
+
+```
+[18 47 56 ... 45 8 0] 
+```
+
+Now we have a long array with numbers in it, we want to create a dataset which has a 100 number long sequence as the input (X), and a single number as the output (Y). We’re going to use a python `deque` for that, which is like a list but has limited capacity, so that when it fills up, and we enter another element, the oldest element is kicked out.
+
+```python
+seq_length = 100
+
+
+X_data = []
+y_data = []
+
+newline_idx = char2idx["\n"]
+
+# Initialize a data deque with only a newline in it, that takes care of the fact the first line of the 
+# text isn't preceeded by a newline, but every other new line in the text is
+
+data_deque = deque([newline_idx],maxlen=seq_length)
+
+
+for i, char_id in enumerate(text_as_int[:-1]):
+    data_deque.append(char_id)
+    
+    if (len(data_deque) == seq_length):
+        X_data.append(list(data_deque))
+        y_data.append(text_as_int[i+1])
+    
+    if ((i % 100) == 0):
+        print(i, end="\r")
+
+print(i)
+
+X_data_np = np.array(X_data)
+y_data_np = np.array(y_data)
+
+print(X_data_np.shape)
+print(y_data_np.shape)
+```
+
+Let’s take a look at out created datasets:
+```python
+# Let's take a look at the X and Y data
+for i in range(5):
+    print("X:\t",repr(''.join(idx2char[X_data[i]])))
+    print("y:\t",repr(idx2char[y_data[i]]))
+    print('-------------')
+```
+```
+X: '\nFirst Citizen:\nBefore we proceed any further, hear me speak.\n\nAll:\nSpeak, speak.\n\nFirst Citizen:\nYo' 
+y: 'u' 
+------------- 
+X: 'First Citizen:\nBefore we proceed any further, hear me speak.\n\nAll:\nSpeak, speak.\n\nFirst Citizen:\nYou' 
+y: ' ' 
+------------- 
+X: 'irst Citizen:\nBefore we proceed any further, hear me speak.\n\nAll:\nSpeak, speak.\n\nFirst Citizen:\nYou ' 
+y: 'a' 
+------------- 
+X: 'rst Citizen:\nBefore we proceed any further, hear me speak.\n\nAll:\nSpeak, speak.\n\nFirst Citizen:\nYou a' 
+y: 'r' 
+------------- 
+X: 'st Citizen:\nBefore we proceed any further, hear me speak.\n\nAll:\nSpeak, speak.\n\nFirst Citizen:\nYou ar' 
+y: 'e' 
+------------- 
+```
+
+Looks good, the last thing we’re going to do, is shuffle the data around. We’re going to shuffle the data again later on, so let’s make a function to do that for us
+
+```python
+def shuffle_data(X_data, y_data):
+    
+    y_data = y_data.reshape((y_data.shape[0], 1))
+    combined_data = np.hstack((X_data, y_data))
+    
+    np.random.shuffle(combined_data)
+
+    X_data = combined_data[:, :-1]
+    y_data = combined_data[:, -1]
+    
+    return X_data, y_data
+
+
+X_data_np, y_data_np = shuffle_data(X_data_np, y_data_np)
+print(X_data_np.shape)
+print(y_data_np.shape)
+```
