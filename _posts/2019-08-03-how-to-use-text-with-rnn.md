@@ -84,7 +84,7 @@ let's define our string length to be 100
 seq_length = 100
 ```
 
-## Phase 3: Pre-process our data:
+## Phase 3: Pre-process our data
 
 RNNs, and really all machine learning methods, can only accept numbers as inputs, so we need first to number'ify our text. What this means is that we will assign every character to a number, and also have a way of converting those numbers back to characters
 
@@ -235,7 +235,7 @@ Once the model is declared, we compile it to bring it to life, and we output the
 
 We will train our RNN for 5 epochs, which means it will look at the data 5 times, but to save our poor RAM memory from exploding, we will do so in batches of 480. This means we will divide out dataset into chunks of 480 data points, and show each chunk to the model. Once all chunks have been shown, we will call it an epoch. We’ll then repeat the process 4 more times.
 
-However, after each epoch, we’d like to see what the model has learned, so let’s define a function that will take out model, an input set of characters, and produce an output of a given size:
+However, after each epoch, we’d like to see what the model has learned, so let’s define a function that will take our model, an input set of characters, and produce an output of a given size:
 
 ```python
 def get_text_from_model(model, test_input, output_size=150):
