@@ -265,7 +265,7 @@ Let’s train our model!
 ```python
 EPOCHS = 5       # NNs operate in epochs, meaning this is how many times the neural network will go 
                  # through the entire data
-BATCH_SIZE = 480   # at each epoch, it will split the data into units of 48 samples, and train on those
+BATCH_SIZE = 480   # at each epoch, it will split the data into units of 480 samples, and train on those
 
 
 for i in range(1, EPOCHS+1):
