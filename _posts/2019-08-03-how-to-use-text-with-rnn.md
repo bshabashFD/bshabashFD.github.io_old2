@@ -138,7 +138,7 @@ print(X_data_np.shape)
 print(y_data_np.shape)
 ```
 
-Let’s take a look at out created datasets:
+Let’s take a look at our created datasets:
 ```python
 # Let's take a look at the X and Y data
 for i in range(5):
@@ -233,7 +233,7 @@ Once the model is declared, we compile it to bring it to life, and we output the
 
 ## Phase 5: Training and Testing
 
-We will train our RNN for 5 epochs, which means it will look at the data 5 times, but to save our poor RAM memory from exploding, we will do so in batches of 480. This means we will divide out dataset into chunks of 480 data points, and show each chunk to the model. Once all chunks have been shown, we will call it an epoch. We’ll then repeat the process 4 more times.
+We will train our RNN for 5 epochs, which means it will look at the data 5 times, but to save our poor RAM memory from exploding, we will do so in batches of 480. This means we will divide our dataset into chunks of 480 data points, and show each chunk to the model. Once all chunks have been shown, we will call it an epoch. We’ll then repeat the process 4 more times.
 
 However, after each epoch, we’d like to see what the model has learned, so let’s define a function that will take our model, an input set of characters, and produce an output of a given size:
 
