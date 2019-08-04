@@ -83,7 +83,7 @@ let's define our string length to be 100
 seq_length = 100
 ```
 
-# Phase 3: Pre-process our data:
+## Phase 3: Pre-process our data:
 
 RNNs, and really all machine learning methods, can only accept numbers as inputs, so we need first to number'ify our text. What this means is that we will assign every character to a number, and also have a way of converting those numbers back to characters
 
