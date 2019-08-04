@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Employing Recurrent Neural Networks for Text Generation
+mathjax: true
 ---
 
 Recurrent Neural Networks (RNNs) are naturally designed to process sequences and extract patterns from them. Unlike Feed-Forward NNs which accept simply a collection of inputs as features, RNNs can pay attention to the order of the inputs coming in, and as such are often used to explore patterns through time or through any naturally occurring sequence.
