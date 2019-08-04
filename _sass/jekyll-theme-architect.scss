@@ -505,6 +505,13 @@ nav {
   }
 }
 
+.post_header img {
+  float: left;
+  width: 100px;
+  height: 100px;
+  background: #555;
+}
+
 /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
 @media only screen and (min-width: 480px) and (max-width: 767px) { }
 
