@@ -105,8 +105,6 @@ print(text_as_int)
 Now we have a long array with numbers in it, we want to create a dataset which has a 100 number long sequence as the input (X), and a single number as the output (Y). We’re going to use a python `deque` for that, which is like a list but has limited capacity, so that when it fills up, and we enter another element, the oldest element is kicked out.
 
 ```python
-seq_length = 100
-
 
 X_data = []
 y_data = []
