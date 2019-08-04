@@ -66,5 +66,23 @@ Is't a verdict?
 All:
 No more talking on't; let it 
 ```
+Ahhh, that's nice, some works of William Shakspeare. I'm not sure if it's all of them (he did write a lot), but we have The Tragedy of Coriolanus, and The Tempest, to name a few, in there.
+
+Now that we have the data, what can we do with it?
+
+## Phase 2: Define our problem
+
+We're going to use this text collection to train an RNN which can generate Shakespeare-like writing. We will give it a string of length n characters, and it will generate the next character for us. We see we have 65 unique characters, so this will be a 65 class classification problem. We will provide a single string of length n, and will process it to create an output of 1 character.
+
+Simply speaking, we'd like our network to learn to print "o" when we provide the string "hell" (to make "hello") or "e" when we provide the string "goodby" (to make "goodbye").
+
+let's define our string length to be 100
+
+```python
+seq_length = 100
+```
+
+# Phase 3: Pre-process our data:
+
 
 
