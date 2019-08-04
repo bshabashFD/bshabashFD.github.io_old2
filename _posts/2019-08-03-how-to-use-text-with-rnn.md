@@ -221,11 +221,12 @@ Non-trainable params: 0
 _________________________________________________________________
 ```
 Let’s review what we have there:
-First, an embedding input layer, it takes a 100 character long sequence and converts each character into a 25 dimensional vector. Thus the output of this layer is a 100X25 two dimensional matrix. 
 
-Then, we have a 1024 neuron LSTM layer, it takes the 100X25 matrix and produces a 1024 single set of values as output. Each LSTM neuron reads the 100X25 matrix, learns to make sense of the sequence of 100 25-dimensional vectors, and outputs a single value, creating a total of 1024 values being passed on to the final layer. 
+First, an embedding input layer, it takes a 100 character long sequence and converts each character into a 25 dimensional vector. Thus the output of this layer is a 100$\times$25 two dimensional matrix. 
 
-The final layer is a simple layer of 65 neurons, who each take the 1024-long output of the 2nd layer, and outputs a number from 0.0-1.0. Each of the 65 final neurons correspond to one of the 65 characters, so each i-th neuron outputs the probability the output character for the input sequence is character i (i.e. neuron 0 outputs the probability the next character in the sequence is character 0, neuron 1 outputs the probability the next character in the sequence is character 1, etc’).
+Then, we have a 1024 neuron LSTM layer, it takes the 100$\times$25 matrix and produces a 1024 single set of values as output. Each LSTM neuron reads the 100$\times$25 matrix, learns to make sense of the sequence of 100 25-dimensional vectors, and outputs a single value, creating a total of 1024 values being passed on to the final layer. 
+
+The final layer is a simple layer of 65 neurons, who each take the 1024-long output of the 2nd layer, and outputs a number from 0.0-1.0. Each of the 65 final neurons correspond to one of the 65 characters, so each $i^{th}$ neuron outputs the probability the output character for the input sequence is character $i$ (i.e. neuron 0 outputs the probability the next character in the sequence is character 0, neuron 1 outputs the probability the next character in the sequence is character 1, etc’).
 
 Once the model is declared, we compile it to bring it to life, and we output the summary to get an idea of our model’s architecture.
 
