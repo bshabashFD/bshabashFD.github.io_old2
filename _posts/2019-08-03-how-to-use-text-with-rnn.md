@@ -182,3 +182,51 @@ X_data_np, y_data_np = shuffle_data(X_data_np, y_data_np)
 print(X_data_np.shape)
 print(y_data_np.shape)
 ```
+
+## Phase 4: Build and Compile our Model
+
+Finally we can create our model and train it. We’re going to use Long-Short Term Memory units ([LSTM units](https://en.wikipedia.org/wiki/Long_short-term_memory)) as our recurrent units, but you can experiment with Gated Recurrent Units (GRUs) as well.
+
+But before we can build our model, we need to consider one more thing. Recall we just assigned a number between 0 and 64 to each of our 65 characters. This was an easy way to turn those text characters into numbers, but we ended up imposing an artificial order on them. We could figure out some representation which is more meaningful, but we can also have Keras do it for us by introducing an [Embedding Unit](https://keras.io/layers/embeddings/). In essence, an embedding unit of `n` dimensions, takes all our alphabet (in this case 65 characters) and learns a unique vector representation for each character in this n-dimensional space. In our case, we will take our characters and convert each into a 25 dimensional vector.
+
+Let’s build our Recurrent Neural Network:
+```python
+model = Sequential()
+
+model.add(Embedding(len(vocab), 25, input_length=seq_length))
+
+model.add(LSTM(1024))
+
+model.add(Dense(len(vocab), activation='softmax'))
+
+
+sgd = tf.keras.optimizers.SGD(lr=0.01, decay=0.0, momentum=0.0, nesterov=False, clipnorm=2.0)
+model.compile(loss='sparse_categorical_crossentropy', 
+              optimizer='adam')
+
+model.summary()
+```
+```
+Model: "sequential_3"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_3 (Embedding)      (None, 100, 25)           1625      
+_________________________________________________________________
+lstm_3 (LSTM)                (None, 1024)              4300800   
+_________________________________________________________________
+dense_3 (Dense)              (None, 65)                66625     
+=================================================================
+Total params: 4,369,050
+Trainable params: 4,369,050
+Non-trainable params: 0
+_________________________________________________________________
+```
+Let’s review what we have there:
+First, an embedding input layer, it takes a 100 character long sequence and converts each character into a 25 dimensional vector. Thus the output of this layer is a 100X25 two dimensional matrix. 
+
+Then, we have a 1024 neuron LSTM layer, it takes the 100X25 matrix and produces a 1024 single set of values as output. Each LSTM neuron reads the 100X25 matrix, learns to make sense of the sequence of 100 25-dimensional vectors, and outputs a single value, creating a total of 1024 values being passed on to the final layer. 
+
+The final layer is a simple layer of 65 neurons, who each take the 1024-long output of the 2nd layer, and outputs a number from 0.0-1.0. Each of the 65 final neurons correspond to one of the 65 characters, so each i-th neuron outputs the probability the output character for the input sequence is character i (i.e. neuron 0 outputs the probability the next character in the sequence is character 0, neuron 1 outputs the probability the next character in the sequence is character 1, etc’).
+
+Once the model is declared, we compile it to bring it to life, and we output the summary to get an idea of our model’s architecture.
