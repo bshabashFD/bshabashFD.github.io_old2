@@ -358,8 +358,4 @@ And I hot spite the over-mouth to
 Well, there we have it. We could probably train our model further and make it produce more and more English like text, but let’s stop and think for a second, do we really need to generate our text character by character? We can actually make the process much easier for our model and simply split the text into individual words rather than individual characters. 
 In my next post, I will present a way to generate our text using a word-by-word split rather than a character-by-character split.
 
-<a href="/assets/_notebooks/how-to-use-text-with-rnn.ipynb" >Download as an .ipynb Jupyter Notebook</a>
-
-<a href="/assets/_notebooks/how-to-use-text-with-rnn.ipynb" class="button">Download as an .ipynb Jupyter Notebook</a>
-
-[Download as an .ipynb Jupyter Notebook](/assets/_notebooks/how-to-use-text-with-rnn.ipynb)
+<a href="https://github.com/bshabashFD/bshabashFD.github.io/blob/master/assets/_notebooks/how-to-use-text-with-rnn.ipynb" >Download as an .ipynb Jupyter Notebook</a>
