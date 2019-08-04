@@ -357,6 +357,6 @@ Not kill me are upon your own is death?
 And I hot spite the over-mouth to 
 ```
 
-Well, there we have it. We could probably train our model further and make it produce more and more English like text, but let’s stop and think for a second, do we really need to generate our text character by character? We can actually make the process much easier for out model and simply split the text into individual words rather than individual characters. 
-In my next post, I will present the way to generate our text using a word-by-word split rather than a character-by-character split.
+Well, there we have it. We could probably train our model further and make it produce more and more English like text, but let’s stop and think for a second, do we really need to generate our text character by character? We can actually make the process much easier for our model and simply split the text into individual words rather than individual characters. 
+In my next post, I will present a way to generate our text using a word-by-word split rather than a character-by-character split.
 
