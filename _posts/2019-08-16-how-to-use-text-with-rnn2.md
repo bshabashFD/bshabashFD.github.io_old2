@@ -339,3 +339,372 @@ model.fit(X_data_np, y_data_np,
         batch_size=BATCH_SIZE,
         epochs=1)
 ```
+```
+EPOCH:  1
+285069/285069 [==============================] - 659s 2ms/sample - loss: 5.7597
+<tensorflow.python.keras.callbacks.History at 0x7f7922f786a0>
+```
+Now let's suppose I want to give my model the input `"ROMEO"` and see what it outputs. This is fine, because `"ROMEO"` is a word in our vocabulary, and we can pad it with newlines to make the sequence size 50 so the input length fits.
+
+But what if we wanted to give the model some sentence to start, and some words in the sentence do not match the words we have in the vocabulary? This was never the case in the previous implementation because we split the text into characters, meaning as long as we used English characters, we were fine. However, in this case we'll have to get creative.
+
+One potential solution is to use a better, pre-made, word embedding which includes many more words. Another solution is to look at each word in our starting sequence, and find the most similar word to it in the available vocabulary. We will use this approach, and employ a [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance) metric to compare strings. I found a good implementation right [here](https://stackabuse.com/levenshtein-distance-and-text-similarity-in-python/)
+
+```python
+def levenshtein(seq1, seq2):
+    '''Levenshtein Distance calculation between seq1 and seq2'''
+    size_x = len(seq1) + 1
+    size_y = len(seq2) + 1
+    matrix = np.zeros ((size_x, size_y))
+    for x in range(size_x):
+        matrix [x, 0] = x
+    for y in range(size_y):
+        matrix [0, y] = y
+
+    for x in range(1, size_x):
+        for y in range(1, size_y):
+            if seq1[x-1] == seq2[y-1]:
+                matrix [x,y] = min(
+                    matrix[x-1, y] + 1,
+                    matrix[x-1, y-1],
+                    matrix[x, y-1] + 1
+                )
+            else:
+                matrix [x,y] = min(
+                    matrix[x-1,y] + 1,
+                    matrix[x-1,y-1] + 1,
+                    matrix[x,y-1] + 1
+                )
+    return (matrix[size_x - 1, size_y - 1])
+```
+```python
+def turn_string_into_list(the_string):
+    '''
+    Takes a string and converts it into a list of words, treating
+    the given set of marks_to_seperate as special words.
+
+    e.g.
+    a = "Hello, my name is Boris"
+    turn_string_into_list(a) -> ['Hello', ',', 'my', 'name', 'is', 'Boris']
+
+    '''
+    the_string = the_string.replace('\n\n', 'doublenewline')
+    marks_to_seperate = [';','-','$',':',',','.','?','!','&', '\n', 'doublenewline'] # Notice we did not put the apostrophe in this list since 
+                                                                # it is usually part of a word (e.g. isn't).
+    for mark in marks_to_seperate:
+    the_string = the_string.replace(mark, ' '+mark).replace('  ', ' ')
+
+    the_string = the_string.replace('doublenewline', '\n\n')
+    string_as_list = the_string.split(' ')
+
+    return string_as_list
+```
+```python
+def padd_string_to_length(the_string, the_length):
+    '''
+    Takes a string and returns a list of words with length the_length
+    with newline characters (\n) padding in the front if the string
+    is too short, or only a subset of the string if the string is
+    too long
+
+    e.g.
+    a = "Hello my name is Boris"
+    padd_string_to_length(a, 10) -> ['\n', '\n', '\n', '\n', '\n', 'Hello', 'my', 'name', 'is', 'Boris']
+    padd_string_to_length(a, 5) -> ['Hello', 'my', 'name', 'is', 'Boris']
+    padd_string_to_length(a, 3) -> ['name', 'is', 'Boris']
+    '''
+
+
+    string_as_list = turn_string_into_list(the_string)
+
+    if (len(string_as_list) > the_length):
+        string_as_list = string_as_list[-the_length:]
+    else:
+        while (len(string_as_list) < the_length):
+            string_as_list.insert(0, '\n')
+
+    return string_as_list
+```
+```python
+def find_closest_word(word, vocab):
+    '''
+    Uses the levenshtein_distance function to find the closest word
+    to word in vocab. The matching is case sensitive.
+
+    e.g.
+    a = "ROME"
+    my_vocab = ["ROMEO", "RO", "JULIET", "rome"]
+    find_closest_word(a, my_vocab) -> "ROMEO"
+    '''
+
+
+    levenshtein_distance = float('inf')
+    return_word = '\n'
+
+    for vocab_word in vocab:
+        new_levenshtein_distance = levenshtein(word, vocab_word)
+    if (new_levenshtein_distance < levenshtein_distance):
+        levenshtein_distance = new_levenshtein_distance
+        return_word = vocab_word
+
+    return return_word                              
+```
+```python
+def convert_string_into_model_approved_words(the_string, seq_length):
+    '''
+    Takes the string the_string and returns the string as a list
+    of length seq_length with newline padding
+    at the begining and being composed only of words contained
+    in vocab (global_variable)
+
+    e.g.
+    convert_string_into_model_approved_words("BORIS", 5) -> ['\n', '\n', '\n', '\n', 'PARIS']
+    convert_string_into_model_approved_words("BORIS hello", 5) -> ['\n', '\n', '\n', 'PARIS', 'hell']
+    convert_string_into_model_approved_words("cold winter", 5) -> ['\n', '\n', '\n', 'cold', 'winter']
+
+    '''
+
+    string_as_list = padd_string_to_length(the_string, seq_length)
+
+    for index, word in enumerate(string_as_list):
+        if (word not in vocab):
+            replacement_word = find_closest_word(word, vocab)
+            string_as_list[index] = replacement_word
+
+    return string_as_list
+```
+
+Now that we have the functions above defined, we can use them to create a prediction loop. We will request an output of size 20 (20 new words being added to our provided string)
+
+```python
+import copy
+
+def get_text_from_model(model, test_input, output_size=20):
+    
+    test_output = copy.copy(test_input)
+    
+
+    for i in range(output_size):
+        string_list = convert_string_into_model_approved_words(test_output, seq_length)
+        
+        text_as_int = np.array([word2idx[word] for word in string_list])
+        text_as_int = text_as_int.reshape((1, seq_length))
+
+        y_predict_proba = model.predict(text_as_int)[0]
+        y_id = np.random.choice(list(range(len(vocab))), size=1, p=y_predict_proba)[0]
+
+        y_word = idx2word[y_id]
+        test_output = test_output+" "+y_word
+        print("added word #"+str(i), end="\r")
+
+        
+    # Final touch, for every punctuation mark, we should remove its
+    # preceeding space
+    
+    marks_to_seperate = [';','-','$',':',',','.','?','!','&', '\n'] # Notice we did not put the apostrophe in this list since 
+                                                                # it is usually part of a word (e.g. isn't).
+    for mark in marks_to_seperate:
+        test_output = test_output.replace(' '+mark, mark)
+      
+    test_output = test_output.replace('\n ', '\n')
+    
+    return test_output
+```
+
+```python
+output_text = get_text_from_model(model, "BORIS:", output_size=20)
+print(output_text)
+```
+
+```
+BORIS: my behind.
+
+GLOUCESTER:
+An proved for leet, are yours coffins falsehood?
+'Tis foe
+```
+
+This function basically takes our model, a seed input, and a length, and produces an output of that length (excluding our initial seed).
+
+Let's train our model!
+
+```python
+EPOCHS = 20       # NNs operate in epochs, meaning this is how many times the neural network will go 
+                 # through the entire data
+BATCH_SIZE = 480   # at each epoch, it will split the data into units of 480 samples, and train on those
+
+
+for i in range(2, EPOCHS+1):
+    print("EPOCH: ",i)
+    X_data_np, y_data_np = shuffle_data(X_data_np, y_data_np)
+    model.fit(X_data_np, y_data_np,
+            batch_size=BATCH_SIZE,
+            epochs=1)
+
+    test_input = "ROMEO:\n"
+    print(get_text_from_model(model, test_input, output_size=20))
+    print("------------")
+```
+
+```
+EPOCH:  2
+285069/285069 [==============================] - 642s 2ms/sample - loss: 4.9097
+ROMEO: and your troth is deceit privilege my duke.
+
+KATHARINA:
+Will this marriage, look good enemy
+------------
+EPOCH:  3
+285069/285069 [==============================] - 638s 2ms/sample - loss: 4.5822
+ROMEO: serve my soul! which it was no;
+Thou, if thou Lewis but, a whose cross'd
+------------
+EPOCH:  4
+285069/285069 [==============================] - 636s 2ms/sample - loss: 4.3222
+ROMEO: our scope I to these ransack'd
+that dogs it can have worthy other's hand;
+Lie for she
+------------
+EPOCH:  5
+285069/285069 [==============================] - 634s 2ms/sample - loss: 4.0725
+ROMEO: by that stock I was well thus with a will,
+Your wonted name did not deign to trumpets
+------------
+EPOCH:  6
+285069/285069 [==============================] - 632s 2ms/sample - loss: 3.7869
+ROMEO: a lady's cousin is known
+A follow up to all a which can
+Intends to fast a day
+------------
+EPOCH:  7
+285069/285069 [==============================] - 630s 2ms/sample - loss: 3.4875
+ROMEO: even thou, in my stitchery, love till I jest,
+And to our voices cause, or
+------------
+EPOCH:  8
+285069/285069 [==============================] - 628s 2ms/sample - loss: 3.1739
+ROMEO: ourselves, at my interior flaunts, Iniquity.
+
+BUCKINGHAM:
+'Twas she that same words holds leisure
+------------
+EPOCH:  9
+285069/285069 [==============================] - 627s 2ms/sample - loss: 2.8628
+ROMEO: thou hast thy device, your good malice?
+
+RATCLIFF:
+Sir Christopher a heavy queen's thing,
+------------
+EPOCH:  10
+285069/285069 [==============================] - 628s 2ms/sample - loss: 2.5636
+ROMEO: then I'll tell them.
+
+BIONDELLO:
+You say, we beseech you?
+
+ABRAHAM:
+
+------------
+EPOCH:  11
+285069/285069 [==============================] - 626s 2ms/sample - loss: 2.2738
+ROMEO: what's what o'clock thou art to be the day?
+Though Edward have worn himself dead before
+waiting
+------------
+EPOCH:  12
+285069/285069 [==============================] - 627s 2ms/sample - loss: 1.9850
+ROMEO: O, 'tis my mother's brother!
+
+CLARENCE:
+He is the way, if there be glad
+------------
+EPOCH:  13
+285069/285069 [==============================] - 632s 2ms/sample - loss: 1.6942
+ROMEO: a unlook'd- gentle mother, and so begg'd
+as we were in to the wall, who lately
+------------
+EPOCH:  14
+285069/285069 [==============================] - 636s 2ms/sample - loss: 1.4026
+ROMEO: I am on both of my Kate, you have.
+
+POLIXENES:
+I do not, sir
+------------
+EPOCH:  15
+285069/285069 [==============================] - 639s 2ms/sample - loss: 1.1094
+ROMEO: he had his desire to face me at the charge
+And with her queen? And do we now
+------------
+EPOCH:  16
+285069/285069 [==============================] - 637s 2ms/sample - loss: 0.8314
+ROMEO: the gain of my mind is now: who
+was not barren here, I never stand in gold
+------------
+EPOCH:  17
+285069/285069 [==============================] - 645s 2ms/sample - loss: 0.5855
+ROMEO: the greater tidings, our Harry is the good.
+
+DUKE VINCENTIO:
+Howsoever you shall plainly be
+------------
+EPOCH:  18
+285069/285069 [==============================] - 636s 2ms/sample - loss: 0.3870
+ROMEO: the sun would have been his wife; we
+protest, so it must be so; but I
+------------
+EPOCH:  19
+285069/285069 [==============================] - 645s 2ms/sample - loss: 0.2406
+ROMEO: the most commanding Bolingbroke,
+I have deserved my brother.
+
+SICINIUS:
+When you do none
+------------
+EPOCH:  20
+285069/285069 [==============================] - 631s 2ms/sample - loss: 0.1447
+ROMEO: thy food are broke from the dead of it.
+
+VIRGILIA:
+This is most likely.
+
+
+------------
+```
+
+Finally let's see our RNN in action. Write a play about me
+
+```python
+test_string = "BORIS THE BLADE:\n"
+print(get_text_from_model(model, test_string, output_size=190))
+```
+```
+BORIS THE BLADE:
+And beg of mine, which may I complain mine.
+
+LADY ANNE:
+Foul a heart- peace! O, nothing now!
+If this your face are to be call'd ere one
+Of your horse; his answer it was it;
+And whither dost thou say King Richard is
+A lost house! Let us be ready, sir.
+
+ESCALUS:
+Let's hear good help; let's bring you to a whore.
+
+GLOUCESTER:
+He hath been good to love the truth of thy kindness
+And break into mine eyes so doth thy life.
+Come, therefore, go up, I say.
+
+WARWICK:
+Upon him, madam, we will stay it now.
+If I may live, my lord, he did;
+And, as the manner is itself, stands out:
+We break the mansion of the cause; but is
+the city, by the chair of question, let them
+continue a present earth
+```
+
+Now this is much nicer. We could probably train the model some more but we'll get diminishing returns here.
+
+I hope this helps in exploring the idea behind text generation (and classification) employing RNNs.
