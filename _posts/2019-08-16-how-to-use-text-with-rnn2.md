@@ -345,7 +345,7 @@ Now let's suppose I want to give my model the input `"ROMEO"` and see what it ou
 
 But what if we wanted to give the model some sentence to start, and some words in the sentence do not match the words we have in the vocabulary? This was never the case in the previous implementation because we split the text into characters, meaning as long as we used English characters, we were fine. However, in this case we'll have to get creative.
 
-One potential solution is to use a better, pre-made, word embedding which includes many more words. Another solution is to look at each word in our starting sequence, and find the most similar word to it in the available vocabulary. We will use this approach, and employ a [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance){:target="_blank"} metric to compare strings. I found a good implementation right [here](https://stackabuse.com/levenshtein-distance-and-text-similarity-in-python/)
+One potential solution is to use a better, pre-made, word embedding which includes many more words. Another solution is to look at each word in our starting sequence, and find the most similar word to it in the available vocabulary. We will use this approach, and employ a [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance){:target="_blank"} metric to compare strings. I found a good implementation right [here](https://stackabuse.com/levenshtein-distance-and-text-similarity-in-python/){:target="_blank"}
 
 ```python
 def levenshtein(seq1, seq2):
