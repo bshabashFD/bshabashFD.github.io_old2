@@ -155,7 +155,7 @@ vocab = list(set(words))
 
 ## Phase 3: Define our problem
 
-Last time, we tried to build words one character at a time, so given `goodby` we wanted our network to output `e` to get `goodbye`. This time we will build our text one word at a time, so given the string `Humpty Dumpty sat on the` we'd like to see the output `wall` (to get `Humpty Dumpty sat on the wall`). We'll use a sequence of length 50 this time.
+Last time, we tried to build words one character at a time, so given `goodby` we wanted our network to output `e` to get `goodbye`. This time we will build our text one word at a time, so given the string `Humpty Dumpty sat on the` we'd like to see the output `wall` (to get `Humpty Dumpty sat on the wall`). We'll use a sequence of length 10 this time.
 
 ```python
 seq_length = 10
@@ -178,7 +178,7 @@ print(text_as_int)
 [13498 10369  7245 ...  6460  3676     0]
 ```
 
-Now we have a long array with numbers in it, we want to create a dataset which has a 50 number long sequence as the input (X), and a single number as the output (Y). Again, we're going to use a python `deque` for that, which is like a list but has limited capacity, so that when it fills up, and we enter another element, the oldest element is kicked out.
+Now we have a long array with numbers in it, we want to create a dataset which has a 10 number long sequence as the input (X), and a single number as the output (Y). Again, we're going to use a python `deque` for that, which is like a list but has limited capacity, so that when it fills up, and we enter another element, the oldest element is kicked out.
 
 ```python
 X_data = []
@@ -344,7 +344,7 @@ EPOCH:  1
 285069/285069 [==============================] - 659s 2ms/sample - loss: 5.7597
 <tensorflow.python.keras.callbacks.History at 0x7f7922f786a0>
 ```
-Now let's suppose I want to give my model the input `"ROMEO"` and see what it outputs. This is fine, because `"ROMEO"` is a word in our vocabulary, and we can pad it with newlines to make the sequence size 50 so the input length fits.
+Now let's suppose I want to give my model the input `"ROMEO"` and see what it outputs. This is fine, because `"ROMEO"` is a word in our vocabulary, and we can pad it with newlines to make the sequence size 10 so the input length fits.
 
 But what if we wanted to give the model some sentence to start, and some words in the sentence do not match the words we have in the vocabulary? This was never the case in the previous implementation because we split the text into characters, meaning as long as we used English characters, we were fine. However, in this case we'll have to get creative.
 
