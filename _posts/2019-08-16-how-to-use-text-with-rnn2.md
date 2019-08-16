@@ -13,3 +13,51 @@ In the [previous post](https://bshabashfd.github.io/2019/08/03/how-to-use-text-w
 In essence, the problem comes from the way we constructed our vocabulary. We split the entire text into individual characters and tried to predict the next character in the sequence. However, we can employ a more reasonable approach and split the data collection into words instead. This will allow the network to choose from already valid words. This seems easy enough, but there are in fact a few hurdles this approach will introduce. Let's work through each one as they come up:
 
 ## Phase 1: Import Keras and Obtain the data
+
+We'll begin again by importing all required packages, and fixing the random seeds
+
+```python
+import tensorflow as tf
+
+import numpy as np
+from collections import deque
+
+from tensorflow.keras.layers import Embedding, LSTM, Dense
+from tensorflow.keras.models import Sequential
+
+from tensorflow import set_random_seed
+set_random_seed(2)
+from numpy.random import seed
+seed(1)
+
+
+path_to_file = tf.keras.utils.get_file('shakespeare.txt', 'https://storage.googleapis.com/download.tensorflow.org/data/shakespeare.txt')
+```
+
+```python
+text = open(path_to_file, 'rb').read().decode(encoding='utf-8')
+print('length of text: {} chars'.format(len(text)))
+print(text[:200])
+```
+```
+length of text: 1115394 chars
+First Citizen:
+Before we proceed any further, hear me speak.
+
+All:
+Speak, speak.
+
+First Citizen:
+You are all resolved rather to die than to famish?
+
+All:
+Resolved. resolved.
+
+First Citizen:
+First, you
+```
+
+## Phase 2: Split the text into individual words
+We're going to split our text into individual words this time, and let the network build text one word at a time.
+
+Alright, let's split into individual words:
