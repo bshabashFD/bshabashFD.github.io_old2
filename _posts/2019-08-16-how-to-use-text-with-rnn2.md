@@ -185,9 +185,6 @@ X_data = []
 y_data = []
 
 
-# Initialize a data deque with only a newline in it, that takes care of the fact the first line of the 
-# text isn't preceeded by a newline, but every other new line in the text is
-
 data_deque = deque([],maxlen=seq_length)
 
 
