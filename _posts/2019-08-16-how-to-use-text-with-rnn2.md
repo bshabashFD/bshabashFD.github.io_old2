@@ -61,3 +61,54 @@ First, you
 We're going to split our text into individual words this time, and let the network build text one word at a time.
 
 Alright, let's split into individual words:
+
+```python
+words = text.split(' ')
+print(words[:10])
+```
+```
+['First', 'Citizen:\nBefore', 'we', 'proceed', 'any', 'further,', 'hear', 'me', 'speak.\n\nAll:\nSpeak,', 'speak.\n\nFirst']
+```
+**Ah ha!** we see our first problem... Some words contain a newline `\n` character (some even contain 2). This is an issue, we want to split words separated both by newlines and spaces. Let's fix that shall we?
+
+```python
+text_with_no_newlines = text.replace('\n\n', '\n').replace('\n', ' ')
+print(text_with_no_newlines[:400])
+```
+```
+First Citizen: Before we proceed any further, hear me speak. All: Speak, speak. First Citizen: You are all resolved rather to die than to famish? All: Resolved. resolved. First Citizen: First, you know Caius Marcius is chief enemy to the people. All: We know't, we know't. First Citizen: Let us kill him, and we'll have corn at our own price. Is't a verdict? All: No more talking on't; let it be done
+```
+
+Notice we replaced our double newlines with a single newlines, and then replaced all single newlines with a space. Now let's see what happens when we split.
+
+```python
+words = text_with_no_newlines.split(' ')
+print(words[:10])
+```
+```
+['First', 'Citizen:', 'Before', 'we', 'proceed', 'any', 'further,', 'hear', 'me', 'speak.']
+```
+
+Hmmmm... this is better, but notice some words have punctuation marks such as colons and periods. Let's see if we can find all punctuation marks in our text.
+
+```python
+all_chars = list(set(text))
+for char in all_chars:
+    if not (char.isalpha()):
+        print(repr(char))
+```
+```
+'&'
+'$'
+"'"
+'.'
+':'
+' '
+';'
+','
+'\n'
+'!'
+'3'
+'-'
+'?'
+```
