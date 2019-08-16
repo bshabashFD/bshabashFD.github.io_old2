@@ -316,7 +316,7 @@ Then, we have a 2048 neuron LSTM layer, it takes the 10$\times$300 matrix and pr
 
 Next is another 2048 neuron LSTM neuron layer. However, it takes the 10$\times$2048 sequence and produces a single set of 2048 values. Each neuron reads the seqeunce, but instead of outputting the sequence, it outputs a single value after having read the entire sequence.
 
-The final layer is a simple layer of 14,566 neurons, who each take the 2048-long output of the 3rd layer, and outputs a number from 0.0-1.0. Each of the 14,566 final neurons correspond to one of the 14,566 words, so each $i^{th}$ neuron outputs the probability the output word for the input sequence is word $i$ (i.e. neuron 0 outputs the probability the next word in the sequence is word 0, neuron 1 outputs the probability the next word in the sequence is word 1, etc').
+The final layer is a simple layer of 14,567 neurons, who each take the 2048-long output of the 3rd layer, and outputs a number from 0.0-1.0. Each of the 14,567 final neurons correspond to one of the 14,567 words, so each $i^{th}$ neuron outputs the probability the output word for the input sequence is word $i$ (i.e. neuron 0 outputs the probability the next word in the sequence is word 0, neuron 1 outputs the probability the next word in the sequence is word 1, etc').
 
 Once the model is declared, we compile it to bring it to life, and we output the summary to get an idea of our model's architecture.
 
