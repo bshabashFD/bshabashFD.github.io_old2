@@ -7,7 +7,7 @@ image: writing-logo.png
 
 Recurrent Neural Networks (RNNs) are naturally designed to process sequences and extract patterns from them. Unlike Feed-Forward NNs which accept simply a collection of inputs as features, RNNs can pay attention to the order of the inputs coming in, and as such are often used to explore patterns through time or through any naturally occurring sequence.
 
-In this post, we'll explore how to employ RNNs for text processing and generation, and we'll be using [TensorFlow](https://www.tensorflow.org/install) and its [Keras](https://keras.io/) API. This post is loosely based on the tutorial at [https://www.tensorflow.org/beta/tutorials/text/text_generation](https://www.tensorflow.org/beta/tutorials/text/text_generation)
+In this post, we'll explore how to employ RNNs for text processing and generation, and we'll be using [TensorFlow](https://www.tensorflow.org/install){:target="_blank"} and its [Keras](https://keras.io/){:target="_blank"} API. This post is loosely based on the tutorial at [https://www.tensorflow.org/beta/tutorials/text/text_generation](https://www.tensorflow.org/beta/tutorials/text/text_generation){:target="_blank"}
 
 ## Phase 1: Obtain the data
 
@@ -185,9 +185,9 @@ print(y_data_np.shape)
 
 ## Phase 4: Build and Compile our Model
 
-Finally we can create our model and train it. We’re going to use Long-Short Term Memory units ([LSTM units](https://en.wikipedia.org/wiki/Long_short-term_memory)) as our recurrent units, but you can experiment with Gated Recurrent Units (GRUs) as well.
+Finally we can create our model and train it. We’re going to use Long-Short Term Memory units ([LSTM units](https://en.wikipedia.org/wiki/Long_short-term_memory)){:target="_blank"} as our recurrent units, but you can experiment with Gated Recurrent Units (GRUs) as well.
 
-But before we can build our model, we need to consider one more thing. Recall we just assigned a number between 0 and 64 to each of our 65 characters. This was an easy way to turn those text characters into numbers, but we ended up imposing an artificial order on them. We could figure out some representation which is more meaningful, but we can also have Keras do it for us by introducing an [Embedding Unit](https://keras.io/layers/embeddings/). In essence, an embedding unit of $n$ dimensions, takes all our alphabet (in this case 65 characters) and learns a unique vector representation for each character in this $n$-dimensional space. In our case, we will take our characters and convert each into a 25 dimensional vector.
+But before we can build our model, we need to consider one more thing. Recall we just assigned a number between 0 and 64 to each of our 65 characters. This was an easy way to turn those text characters into numbers, but we ended up imposing an artificial order on them. We could figure out some representation which is more meaningful, but we can also have Keras do it for us by introducing an [Embedding Unit](https://keras.io/layers/embeddings/){:target="_blank"}. In essence, an embedding unit of $n$ dimensions, takes all our alphabet (in this case 65 characters) and learns a unique vector representation for each character in this $n$-dimensional space. In our case, we will take our characters and convert each into a 25 dimensional vector.
 
 Let’s build our Recurrent Neural Network:
 ```python
@@ -358,4 +358,4 @@ And I hot spite the over-mouth to
 Well, there we have it. We could probably train our model further and make it produce more and more English like text, but let’s stop and think for a second, do we really need to generate our text character by character? We can actually make the process much easier for our model and simply split the text into individual words rather than individual characters. 
 In my [next post](https://bshabashfd.github.io/2019/08/16/how-to-use-text-with-rnn2.html), I will present a way to generate our text using a word-by-word split rather than a character-by-character split.
 
-<a href="https://github.com/bshabashFD/bshabashFD.github.io/blob/master/assets/_notebooks/how-to-use-text-with-rnn.ipynb" download="download">Download Tutorial as an .ipynb Jupyter Notebook</a>
+<a href="https://raw.githubusercontent.com/bshabashFD/bshabashFD.github.io/master/assets/_notebooks/how-to-use-text-with-rnn.ipynb" download="download">Download Tutorial as an .ipynb Jupyter Notebook</a>
