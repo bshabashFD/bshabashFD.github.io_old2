@@ -112,3 +112,134 @@ for char in all_chars:
 '-'
 '?'
 ```
+So we have an interesting collection of punctuation marks, plus a few other marks such as apostrophes, dollar sign (how did that get there?), and the number `3`.
+Let's define all marks we want to separate from the word that precedes them.
+
+```python
+marks_to_seperate = [';','-','$',':',',','.','?','!','&', '\n'] # Notice we did not put the apostrophe in this list since 
+                                                                # it is usually part of a word (e.g. isn't).
+```
+
+```python
+for mark in marks_to_seperate:
+    text = text.replace(mark, ' '+mark+' ').replace('  ', ' ')
+    print("replaced "+mark)
+    
+text = text.replace('\n \n', '\n\n')
+```
+```
+replaced ;
+replaced -
+replaced $
+replaced :
+replaced ,
+replaced .
+replaced ?
+replaced !
+replaced &
+replaced 
+```
+```python
+print(repr(text[: 400]))
+```
+```
+"First Citizen : \n Before we proceed any further , hear me speak . \n\n All : \n Speak , speak . \n\n First Citizen : \n You are all resolved rather to die than to famish ? \n\n All : \n Resolved . resolved . \n\n First Citizen : \n First , you know Caius Marcius is chief enemy to the people . \n\n All : \n We know't , we know't . \n\n First Citizen : \n Let us kill him , and we'll have corn at our own price . \n Is'"
+```
+Great! much better. Notice how we still have the newlines in there. Why? because by padding each of the punctuation marks with spaces, we in essence define them as words we will use in our RNN. So we kept the newline there as well so that network knows to put in newlines in our output.
+
+```python
+words = text.split(' ')
+print(words[:20])
+vocab = list(set(words))
+```
+
+## Phase 3: Define our problem
+
+Last time, we tried to build words one character at a time, so given `goodby` we wanted our network to output `e` to get `goodbye`. This time we will build our text one word at a time, so given the string `Humpty Dumpty sat on the` we'd like to see the output `wall` (to get `Humpty Dumpty sat on the wall`). We'll use a sequence of length 50 this time.
+
+```python
+seq_length = 10
+```
+
+## Phase 4: Pre-process our data
+
+RNNs, and really all machine learning methods, can only accept numbers as inputs, so we need first to number’ify our text. What this means is that we will assign every character to a number, and also have a way of converting those numbers back to characters
+
+```python
+# dictionary comprehension, assign every character to a number from 0-64
+word2idx = {u:i for i, u in enumerate(vocab)}
+idx2word = np.array(vocab)
+
+# let’s check our text after it’s been transformed into numbers
+text_as_int = np.array([word2idx[word] for word in words])
+print(text_as_int)
+```
+```
+[13498 10369  7245 ...  6460  3676     0]
+```
+
+Now we have a long array with numbers in it, we want to create a dataset which has a 50 number long sequence as the input (X), and a single number as the output (Y). Again, we're going to use a python `deque` for that, which is like a list but has limited capacity, so that when it fills up, and we enter another element, the oldest element is kicked out.
+
+```python
+X_data = []
+y_data = []
+
+
+# Initialize a data deque with only a newline in it, that takes care of the fact the first line of the 
+# text isn't preceeded by a newline, but every other new line in the text is
+
+data_deque = deque([],maxlen=seq_length)
+
+
+for i, word_id in enumerate(text_as_int[:-1]):
+    data_deque.append(word_id)
+    
+    if (len(data_deque) == seq_length):
+        X_data.append(list(data_deque))
+        y_data.append(text_as_int[i+1])
+    
+    if ((i % 100) == 0):
+        print(i, end="\r")
+
+print(i)
+
+X_data_np = np.array(X_data)
+y_data_np = np.array(y_data)
+
+print(X_data_np.shape)
+print(y_data_np.shape)
+```
+
+```
+285077
+(285069, 10)
+(285069,)
+```
+
+Let's take a look at out created dataset:
+
+```python
+# Let's take a look at the X and Y data
+for i in range(5):
+    print("X:\t",repr(' '.join(idx2word[X_data_np[i]])))
+    print("y:\t",repr(idx2word[y_data_np[i]]))
+    print('-------------')
+```
+
+```
+X:	 'First Citizen : \n Before we proceed any further ,'
+y:	 'hear'
+-------------
+X:	 'Citizen : \n Before we proceed any further , hear'
+y:	 'me'
+-------------
+X:	 ': \n Before we proceed any further , hear me'
+y:	 'speak'
+-------------
+X:	 '\n Before we proceed any further , hear me speak'
+y:	 '.'
+-------------
+X:	 'Before we proceed any further , hear me speak .'
+y:	 '\n\n'
+-------------
+```
