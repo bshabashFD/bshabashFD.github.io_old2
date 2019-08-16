@@ -243,3 +243,99 @@ X:	 'Before we proceed any further , hear me speak .'
 y:	 '\n\n'
 -------------
 ```
+Looks good, the last thing we're going to do, is shuffle the data around. We're going to shuffle the data again later on, so let's make a function to do that for us
+
+```python
+def shuffle_data(X_data, y_data):
+    
+    y_data = y_data.reshape((y_data.shape[0], 1))
+    combined_data = np.hstack((X_data, y_data))
+    
+    np.random.shuffle(combined_data)
+
+    X_data = combined_data[:, :-1]
+    y_data = combined_data[:, -1]
+    
+    return X_data, y_data
+
+
+X_data_np, y_data_np = shuffle_data(X_data_np, y_data_np)
+print(X_data_np.shape)
+print(y_data_np.shape)
+```
+```
+(285069, 10)
+(285069,)
+```
+
+## Phase 5: Build and Compile our Model
+
+Finally we can create our model and train it. We're going to use Long-Short Term Memory units (LSTM units) as our recurrent units, but you can experiment with Gated Recurrent Units (GRUs) as well.
+
+But before we can build our model, we need to consider one more thing. Recall we just assigned a number to each of our words. This was an easy way to turn those words into numbers, but we ended up imposing an artificial order on them. We could figure out some representation which is more meaningful, but we can also have Keras do it for us by introducing an Embedding Unit. In essence, an embedding unit of $n$ dimensions, takes all our vocabulary and learns a unique vector representation for each word in this $n$-dimensional space. Previously we used 25-dimensional space for characters, but we should pick a bigger one for words. Let's try 300 (totally scientific magic number).
+
+Let's build our Recurrent Neural Network:
+
+```python
+model = Sequential()
+
+model.add(Embedding(len(vocab), 300, input_length=seq_length))
+model.add(LSTM(2048, return_sequences=True))
+model.add(LSTM(2048))
+model.add(Dense(len(vocab), activation='softmax'))
+
+
+model.compile(loss='sparse_categorical_crossentropy', 
+              optimizer='adam')
+
+model.summary()
+```
+
+```
+Model: "sequential_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_1 (Embedding)      (None, 10, 300)           4370100   
+_________________________________________________________________
+lstm_2 (LSTM)                (None, 10, 2048)          19243008  
+_________________________________________________________________
+lstm_3 (LSTM)                (None, 2048)              33562624  
+_________________________________________________________________
+dense_1 (Dense)              (None, 14567)             29847783  
+=================================================================
+Total params: 87,023,515
+Trainable params: 87,023,515
+Non-trainable params: 0
+```
+
+**WOW!** 87M parameters to optimize, this will take a while even on Google Colab...
+
+Let's review what we have there:
+
+First, an embedding input layer, it takes a 10 word long sequence and converts each word into a 300-dimensional vector. Thus the output of this layer is a 10$\times$300 two dimensional matrix.
+
+Then, we have a 2048 neuron LSTM layer, it takes the 10$\times$300 matrix and produces a 100$\times$2048 set of values as output. Each LSTM neuron reads the 10$\times$300 matrix, learns to make sense of the sequence of 10 300-dimensional vectors, and outputs a value at each step in the sequence, creating a new sequence of 10 items (`return_sequences=True`). Thus we end up with a new sequence of 10$\times$2048 from the 2048 neurons.
+
+Next is another 2048 neuron LSTM neuron layer. However, it takes the 10$\times$2048 sequence and produces a single set of 2048 values. Each neuron reads the seqeunce, but instead of outputting the sequence, it outputs a single value after having read the entire sequence.
+
+The final layer is a simple layer of 14,566 neurons, who each take the 2048-long output of the 3rd layer, and outputs a number from 0.0-1.0. Each of the 14,566 final neurons correspond to one of the 14,566 words, so each $i^{th}$ neuron outputs the probability the output word for the input sequence is word $i$ (i.e. neuron 0 outputs the probability the next word in the sequence is word 0, neuron 1 outputs the probability the next word in the sequence is word 1, etc').
+
+Once the model is declared, we compile it to bring it to life, and we output the summary to get an idea of our model's architecture.
+
+## Phase 6: Training and Testing
+
+We will train our RNN for 20 epochs, which means it will look at the data 20 times, but to save our poor RAM memory from exploding, we will do so in batches of 480. This means we will divide out dataset into chunks of 480 data points, and show each chunk to the model. Once all chunks have been shown, we will call it an epoch. We’ll then repeat the process 19 more times.
+
+However, after each epoch, we'd like to see what the model has learned. Let's train the model for one epoch and then see how we can test its performance.
+
+```python
+BATCH_SIZE = 480   # at each epoch, it will split the data into units of 480 samples, and train on those
+i = 1
+print("EPOCH: ",i)
+X_data_np, y_data_np = shuffle_data(X_data_np, y_data_np)
+
+model.fit(X_data_np, y_data_np,
+        batch_size=BATCH_SIZE,
+        epochs=1)
+```
