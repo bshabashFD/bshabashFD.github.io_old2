@@ -389,7 +389,7 @@ def turn_string_into_list(the_string):
     marks_to_seperate = [';','-','$',':',',','.','?','!','&', '\n', 'doublenewline'] # Notice we did not put the apostrophe in this list since 
                                                                 # it is usually part of a word (e.g. isn't).
     for mark in marks_to_seperate:
-    the_string = the_string.replace(mark, ' '+mark).replace('  ', ' ')
+        the_string = the_string.replace(mark, ' '+mark).replace('  ', ' ')
 
     the_string = the_string.replace('doublenewline', '\n\n')
     string_as_list = the_string.split(' ')
@@ -440,9 +440,9 @@ def find_closest_word(word, vocab):
 
     for vocab_word in vocab:
         new_levenshtein_distance = levenshtein(word, vocab_word)
-    if (new_levenshtein_distance < levenshtein_distance):
-        levenshtein_distance = new_levenshtein_distance
-        return_word = vocab_word
+        if (new_levenshtein_distance < levenshtein_distance):
+            levenshtein_distance = new_levenshtein_distance
+            return_word = vocab_word
 
     return return_word                              
 ```
