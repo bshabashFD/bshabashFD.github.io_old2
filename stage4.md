@@ -25,3 +25,29 @@ To test this theory, we will first try to fit a linear model on a multi-dimensio
 
 
 We will start by importing everything we need:
+
+```python
+import numpy as np
+import time
+import plotly
+import plotly.graph_objs as go
+plotly.offline.init_notebook_mode(connected=False)
+import pandas as pd
+
+from sklearn.manifold import TSNE
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import Lasso
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.svm import LinearSVR
+
+
+import warnings
+warnings.filterwarnings("ignore")
+
+import matplotlib.pyplot as plt
+
+%matplotlib inline
+
+```
