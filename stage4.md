@@ -53,3 +53,26 @@ import matplotlib.pyplot as plt
 %matplotlib inline
 
 ```
+
+Let's load the dataset:
+
+```python
+from sklearn.datasets import fetch_mldata
+mnist = fetch_mldata('MNIST original')
+
+MNIST_X = mnist.data
+MNIST_Y = mnist.target
+print(MNIST_X.shape)
+print(MNIST_Y.shape)
+
+np.random.seed(0)
+mnist_percent = 0.02
+X_index = np.random.choice(list(range(MNIST_X.shape[0])), size=int(MNIST_X.shape[0]*mnist_percent))
+
+MNIST_X_10 = MNIST_X[X_index]
+MNIST_Y_10 = MNIST_Y[X_index]
+
+print(MNIST_X_10.shape)
+print(MNIST_Y_10.shape)
+
+```
