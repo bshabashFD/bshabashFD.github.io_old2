@@ -157,3 +157,11 @@ plot_MNIST(MNIST_X_10_train_2D, MNIST_Y_10_train)
 ```
 
 <img src="/assets/images/rtSNE2_train.svg" />
+
+Now let's plot the test data:
+
+```python
+plot_MNIST(MNIST_X_10_test_2D, MNIST_Y_10_test)
+```
+
+<img src="/assets/images/rtSNE2_test.svg" />
