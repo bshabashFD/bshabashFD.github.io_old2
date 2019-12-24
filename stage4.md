@@ -215,7 +215,7 @@ for i in range(max_trials):
                     early_exaggeration=4.0, 
                     learning_rate=400.0,
                     n_iter=1000, 
-                    angle=0.1)
+                    angle=0.3)
 
         MNIST_X_2D = tSNE.fit_transform(MNIST_X_10)
 
