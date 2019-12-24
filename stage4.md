@@ -21,6 +21,7 @@ $$x'_i = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_n x_n$$
 
 If such a mapping exists, then for a reduction to $m$ dimensional space, we could employ a linear regression to find this mapping.
 
-To test this theory, we will first try to fit a linear model on a multi-dimensional dataset from `sklearn`. I have chosen the iris dataset as the example here since it has more than two classes, and has 13 features.
+To test this theory, we will first try to fit a linear model on a multi-dimensional dataset from `sklearn`. I have chosen the MNIST dataset as the example here since it has more than two classes, and requires no scaling (all dimensions are in the same scale).
+
 
 We will start by importing everything we need:
