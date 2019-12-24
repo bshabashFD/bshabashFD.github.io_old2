@@ -1,5 +1,6 @@
 ---
 layout: default
+permalink: /stage4/
 ---
 
 <div class="posts">
