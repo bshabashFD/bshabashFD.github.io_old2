@@ -15,9 +15,11 @@ The methodology behind tSNE is explained extremely well in [this](https://www.yo
 
 ## The Methodology
 
-tSNE works by finding an embedding in an $m$ dimensional space from an $n$ dimensional space (where $m \le n$). So let's ask ourselves, perhaps once the embedding is found, there is a linear mapping from the $n$ dimensional space to the $m$ dimensional space? In other words, for each dimension $i$ in the new $m$ dimensional space, is there a linear mapping:
+tSNE works by finding an embedding in an $m$ dimensional space from an $n$ dimensional space (where $m \le n$). So let's ask ourselves, perhaps once the embedding is found, there is a mapping from the $n$ dimensional space to the $m$ dimensional space? In other words, for each dimension $i$ in the new $m$ dimensional space, is there a mapping:
 
-$$x'_i = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_n x_n$$
+$$\Phi(\vec{X}) = \vec{X}'$$
+
+Where $\vec{X} \in {\rm I\!R}^n$ and $\vec{X}' \in {\rm I\!R}^m$
 
 If such a mapping exists, then for a reduction to $m$ dimensional space, we could employ a linear regression to find this mapping.
 
