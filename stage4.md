@@ -165,3 +165,26 @@ plot_MNIST(MNIST_X_10_test_2D, MNIST_Y_10_test)
 ```
 
 <img src="/assets/images/rtSNE2_test.svg" />
+
+
+Now let's create our linear regression to learn the mapping function. I'm using a LASSO regression here since early experiments showed the stock linear regression performs terribly.
+
+```python
+my_lr = Lasso()
+my_lr.fit(MNIST_X_10_train, MNIST_X_10_train_2D)
+MNIST_X_10_pred_2D = my_lr.predict(MNIST_X_10_test) 
+```
+
+We're going to develop an equivalent measure of the $R^2$ value, but for distances. Simply put, we will calculate
+$$1-\frac{u}{v}$$
+Where $u$ is the distance from all calculated positions to the the true positions, and $v$ is the distance from the center of the true positions to all the individual true positions.
+
+Much like the $R^2$ measure, this is bound by an upper limit of 1.0 if all coordinates are predicted perfectly.
+
+```python
+def distance_r2(X_pred, X_true):
+    u = np.mean(np.linalg.norm(X_true-X_pred, axis=1))
+    v = np.mean(np.linalg.norm(X_true-np.mean(X_true, axis=0), axis=1))
+    
+    return 1- (u/v)
+```
