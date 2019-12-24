@@ -11,7 +11,7 @@ _yay_
 [back](./)
 
 <div class="posts">
-  {% for post in site.assets %}
+  {% for post in site.stage123 %}
      {{ post }}
     <article class="post">
       <div class="post_header">
