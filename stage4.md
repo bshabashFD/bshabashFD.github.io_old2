@@ -127,4 +127,4 @@ def plot_MNIST(MNIST_x, MNIST_y):
 plot_MNIST(MNIST_X_10_2D, MNIST_Y_10)
 ```
 
-<img src="{{ site.avatar }}" />
+<img src="images/logo2.png" />
