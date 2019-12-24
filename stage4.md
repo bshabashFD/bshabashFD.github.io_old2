@@ -128,3 +128,20 @@ plot_MNIST(MNIST_X_10_2D, MNIST_Y_10)
 ```
 
 <img src="/assets/images/rtSNE.svg" />
+
+This is the result of tSNE when it is run on a dataset for dimensionality reduction. However, we want to ask ourselves, what if we had a train/test split? tSNE would only be fitted on the training data, and then we'd have to recreate the embedding as best we can for the test data.
+
+## The Train/Test Split Set-up
+
+Now let's consider our scenario of interest. We will use the MNIST data again, and split it into a train and a test datasets.
+
+```python
+MNIST_X_10_train, MNIST_X_10_test, MNIST_Y_10_train, MNIST_Y_10_test = train_test_split(MNIST_X_10, 
+                                                                        MNIST_Y_10, 
+                                                                        test_size=0.33, 
+                                                                        random_state=1)
+MNIST_X_10_train_2D, MNIST_X_10_test_2D, MNIST_Y_10_train, MNIST_Y_10_test = train_test_split(MNIST_X_10_2D, 
+                                                                              MNIST_Y_10, 
+                                                                              test_size=0.33, 
+                                                                              random_state=1)
+```
