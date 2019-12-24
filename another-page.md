@@ -9,7 +9,7 @@ _yay_
 [back](./)
 
 <div class="posts">
-  {% for post in site.posts %}
+  {% for post in site.stage123 %}
     <article class="post">
       <div class="post_header">
       {% if post.image %}
