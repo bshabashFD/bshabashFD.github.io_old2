@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Reusable tSNE
+mathjax: true
 permalink: /stage4/
 ---
 
