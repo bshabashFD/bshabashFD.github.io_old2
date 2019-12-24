@@ -209,6 +209,7 @@ max_trials = 1000
 for i in range(max_trials):
   
     if ((i % 50) == 0):
+        # make a new tSNE and embedding
         tSNE = TSNE(n_components=2, 
                     perplexity=20, 
                     early_exaggeration=4.0, 
@@ -218,6 +219,7 @@ for i in range(max_trials):
 
         MNIST_X_2D = tSNE.fit_transform(MNIST_X_10)
 
+    # split the source data and the embedding
     MNIST_X_train, MNIST_X_test, MNIST_Y_train, MNIST_Y_test = train_test_split(MNIST_X_10, 
                                                                                 MNIST_Y_10, 
                                                                                 test_size=0.2, 
@@ -228,15 +230,15 @@ for i in range(max_trials):
                                                                                       random_state=i)
   
 
+    # create the embedding mapping
     my_lr.fit(MNIST_X_train, MNIST_X_train_2D)
-
-
     MNIST_X_pred_2D = my_lr.predict(MNIST_X_test)
 
-
+    # calculate the quality of the embedding mapping
     dist_r2 = distance_r2(MNIST_X_pred_2D, MNIST_X_test_2D)
     lr_distances.append(dist_r2)
-
+     
+    # give some progress output
     if ((i%10) == 0):
         print(f'finished {i} rounds: {dist_r2}', end="\r")
 ```
