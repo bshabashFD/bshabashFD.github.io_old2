@@ -83,3 +83,48 @@ print(MNIST_Y_10.shape)
 (1400, 784)
 (1400,)
 ```
+
+And now finally run tSNE on the result, we will reduce the number of dimensions to 2 so we can easily visualize the data.
+
+```python
+tSNE = TSNE(n_components=2, 
+            random_state=2, 
+            perplexity=20, 
+            early_exaggeration=4.0, 
+            learning_rate=400.0,
+            n_iter=1000, 
+            angle=0.3,
+            verbose=1)
+
+MNIST_X_10_2D = tSNE.fit_transform(MNIST_X_10)
+```
+
+Let's define a function to easily plot the data:
+
+```python
+def plot_MNIST(MNIST_x, MNIST_y):
+    plt.figure(figsize=(10,10))
+    colors = {0: "red",
+              1: "blue",
+              2: "black",
+              3: "orange",
+              4: "green",
+              5: "pink",
+              6: "purple",
+              7: "yellow",
+              8: "magenta",
+              9: "silver"}
+
+    for i in range(10):
+        mask = MNIST_y == i    
+        plt.scatter(MNIST_x[mask][:, 0], MNIST_x[mask][:, 1], c=colors[i], label=f'{i}')
+    plt.xlabel("tSNE component 1")
+    plt.ylabel("tSNE component 2")
+    plt.legend()
+    plt.show();
+```
+```python
+plot_MNIST(MNIST_X_10_2D, MNIST_Y_10)
+```
+
+
