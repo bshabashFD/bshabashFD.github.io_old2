@@ -4,13 +4,13 @@ layout: default
 
 ## Welcome to another page 
 
-
+_stage123
 _yay_
 
 [back](./)
 
 <div class="posts">
-  {% for post in site.stage123 %}
+  {% for post in site._stage123 %}
      {{ post }}
     <article class="post">
       <div class="post_header">
