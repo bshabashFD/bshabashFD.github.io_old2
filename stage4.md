@@ -3,7 +3,7 @@ layout: default
 ---
 
 <div class="posts">
-  {% for post in site.stage123 %}
+  {% for post in site.posts %}
     <article class="post">
       <div class="post_header">
       {% if post.image %}
