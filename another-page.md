@@ -10,6 +10,7 @@ _yay_
 
 <div class="posts">
   {% for post in site.stage123 %}
+     {{ post }}
     <article class="post">
       <div class="post_header">
       {% if post.image %}
