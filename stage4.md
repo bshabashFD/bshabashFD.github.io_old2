@@ -188,3 +188,55 @@ def distance_r2(X_pred, X_true):
     
     return 1- (u/v)
 ```
+```python
+distance_r2(MNIST_X_10_pred_2D, MNIST_X_10_test_2D)
+```
+```
+0.4635027691570044
+```
+
+Not bad... but there is room for improvement.
+First of all, a distance-$R^2$ value of 0.46 may not seem great, but let's ask ourselves, how consistent is this performance? to test this point, let's split the data in the same proportion 1000 times, with a different seed every time, and look at the distribution of performances.
+
+We will also re-fit tSNE every few times since its performance is also stochastic and non-deterministic.
+
+```python
+lr_distances = []
+
+max_trials = 1000
+
+
+for i in range(max_trials):
+  
+    if ((i % 50) == 0):
+        tSNE = TSNE(n_components=2, 
+                    perplexity=20, 
+                    early_exaggeration=4.0, 
+                    learning_rate=400.0,
+                    n_iter=1000, 
+                    angle=0.1)
+
+        MNIST_X_2D = tSNE.fit_transform(MNIST_X_10)
+
+    MNIST_X_train, MNIST_X_test, MNIST_Y_train, MNIST_Y_test = train_test_split(MNIST_X_10, 
+                                                                                MNIST_Y_10, 
+                                                                                test_size=0.2, 
+                                                                                random_state=i)
+    MNIST_X_train_2D, MNIST_X_test_2D, MNIST_Y_train, MNIST_Y_test = train_test_split(MNIST_X_2D, 
+                                                                                      MNIST_Y_10, 
+                                                                                      test_size=0.2, 
+                                                                                      random_state=i)
+  
+
+    my_lr.fit(MNIST_X_train, MNIST_X_train_2D)
+
+
+    MNIST_X_pred_2D = my_lr.predict(MNIST_X_test)
+
+
+    dist_r2 = distance_r2(MNIST_X_pred_2D, MNIST_X_test_2D)
+    lr_distances.append(dist_r2)
+
+    if ((i%10) == 0):
+        print(f'finished {i} rounds: {dist_r2}', end="\r")
+```
