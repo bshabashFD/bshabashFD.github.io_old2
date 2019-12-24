@@ -145,3 +145,15 @@ MNIST_X_10_train_2D, MNIST_X_10_test_2D, MNIST_Y_10_train, MNIST_Y_10_test = tra
                                                                               test_size=0.33, 
                                                                               random_state=1)
 ```
+
+Notice we split both the original 784-dimensional dataset, as well as the transformed 2-dimensional dataset. Furthermore, we split both in the same way by fixing the `random_state` of both splitting methods. 
+So now we have our original dataset split, as well as the reduced dataset. We will use the train data to try and find a mapping, first linear and then non-linear, and then test how good our fit is using the test data.
+At this point it's important to define our independent variables and our dependent variables; Our independent variable is the 784-dimensional data, while our dependent variable is the 2-dimensional data. 
+
+First, let's look at the training data, we will only use the y data to colour the three different digits
+
+```python
+plot_MNIST(MNIST_X_10_train_2D, MNIST_Y_10_train)
+```
+
+<img src="/assets/images/rtSNE2_train.svg" />
