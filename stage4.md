@@ -242,3 +242,12 @@ for i in range(max_trials):
     if ((i%10) == 0):
         print(f'finished {i} rounds: {dist_r2}', end="\r")
 ```
+
+```python
+plt.figure(figsize=(7,7))
+plt.hist(lr_distances, bins=100)
+plt.show()
+print(np.mean(lr_distances),"+/-",np.std(lr_distances))
+```
+
+<img src="/assets/images/LR_hist.svg" />
