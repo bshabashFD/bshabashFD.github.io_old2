@@ -249,5 +249,20 @@ plt.hist(lr_distances, bins=100)
 plt.show()
 print(np.mean(lr_distances),"+/-",np.std(lr_distances))
 ```
-
 <img src="/assets/images/LR_hist.svg" />
+
+```
+0.475123113167164 +/- 0.022504375367352846
+```
+
+So in general it seems the distance-$R^2$ value will be around 0.48 with a standard deviation of 0.02. This is our baseline, and it doesn't look ideal.
+
+The next question is, can non-linear methods do better? Let's set up an environment to test this idea. 
+
+We will try a few models:
+
+
+*   K-Nearest Neighbour (with varying $K$ values)
+*   Decision Tree (with varying depth limits)
+*   Linear Support Vector Machine (with varying degrees of regularization)
+
