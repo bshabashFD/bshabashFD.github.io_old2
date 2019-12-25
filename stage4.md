@@ -266,3 +266,8 @@ We will try a few models:
 *   Decision Tree (with varying depth limits)
 *   Linear Support Vector Machine (with varying degrees of regularization)
 
+
+
+## bla
+
+<iframe src="/assets/plotly/KNN_distance.html"></iframe>
