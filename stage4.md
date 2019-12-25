@@ -720,3 +720,8 @@ fig = plot_run_times(run_times_lr, "Linear Regression", "rgb(0,230,230)", None)
 
 <iframe width="900" height="500" frameborder="0" src="/assets/plotly/Linear Regression run times.html"></iframe>
 
+### K-Nearest Neighbour
+
+### Decision Trees
+
+### Linear Support Vector Machines
