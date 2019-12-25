@@ -722,6 +722,14 @@ fig = plot_run_times(run_times_lr, "Linear Regression", "rgb(0,230,230)", None)
 
 ### K-Nearest Neighbour
 
+```python
+model1 = KNeighborsRegressor()
+run_times_knn = collect_run_times(model1, None)
+fig = plot_run_times(run_times_knn, "KNN", "rgb(255,0,0)",fig)
+```
+
+<iframe width="900" height="500" frameborder="0" src="/assets/plotly/KNN run times.html"></iframe>
+
 ### Decision Trees
 
 ### Linear Support Vector Machines
