@@ -5,7 +5,6 @@ mathjax: true
 permalink: /stage4/
 ---
 
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
 
 ## t-SNE vs PCA
 Dimensionality reduction is a technique often employed for visualization purposes. The method of choice used to be Principle Component Analysis (PCA), but since its arrival on the scene, t-Distribution Stochastic Neighborhood Embedding (t-SNE) has been gaining popularity due to its improved performance in maintaining distance-based relationships between data points from the high dimensional space. 
@@ -272,4 +271,4 @@ We will try a few models:
 
 ## bla
 
-<iframe width="900" height="800" src="/assets/plotly/KNN_distance.html"></iframe>
+<iframe width="900" height="500" src="/assets/plotly/KNN_distance.html"></iframe>
