@@ -390,4 +390,4 @@ for model in unique_models:
 fig.update_yaxes(range=[0.25, 1.0])
 plotly.offline.iplot(fig)
 ```
-<iframe width="900" height="500" src="/assets/plotly/KNN_distance.html"></iframe>
+<iframe width="900" height="500" frameborder="0" src="/assets/plotly/KNN_distance.html"></iframe>
