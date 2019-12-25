@@ -269,6 +269,125 @@ We will try a few models:
 
 
 
-## bla
+## Testing Advanced Models
 
+First, let's define a function `measure_distances` which will accept a model and a number of trials, and plot for us the result of employing this model in finding a mapping.
+
+```python
+def measure_distances(model1, model2, number_of_trials=10000):
+    # The function accepts two models since SVM models cannot accept multiple targets
+    distances = []
+
+    for i in range(number_of_trials):
+
+        if ((i % 50) == 0):
+            # make a new tSNE and embedding
+            tSNE = TSNE(n_components=2, 
+                        perplexity=20, 
+                        early_exaggeration=4.0, 
+                        learning_rate=400.0,
+                        n_iter=1000, 
+                        angle=0.3)
+
+            MNIST_X_10_2D = tSNE.fit_transform(MNIST_X_10)
+
+        # split the source data and the embedding
+        MNIST_X_10_train, MNIST_X_10_test, MNIST_Y_10_train, MNIST_Y_10_test = train_test_split(MNIST_X_10, 
+                                                                                MNIST_Y_10, 
+                                                                                test_size=0.2, 
+                                                                                random_state=i)
+        MNIST_X_10_train_2D, MNIST_X_10_test_2D, MNIST_Y_10_train, MNIST_Y_10_test = train_test_split(MNIST_X_10_2D, 
+                                                                                      MNIST_Y_10, 
+                                                                                      test_size=0.2, 
+                                                                                      random_state=i)
+        
+        # create the embedding mapping
+        try:
+            model1.fit(MNIST_X_10_train, MNIST_X_10_train_2D)
+            MNIST_X_10_pred_2D = model1.predict(MNIST_X_10_test)
+        except ValueError:
+            # go here if the regressor cannot accept multiple outputs
+            
+            model1.fit(MNIST_X_10_train, MNIST_X_10_train_2D[:, 0])
+            model2.fit(MNIST_X_10_train, MNIST_X_10_train_2D[:, 1])
+
+            MNIST_X_10_pred_2D = np.zeros(MNIST_X_10_test_2D.shape, MNIST_X_10_test_2D.dtype)
+
+            MNIST_X_10_pred_2D[:, 0] = model1.predict(MNIST_X_10_test)
+            MNIST_X_10_pred_2D[:, 1] = model2.predict(MNIST_X_10_test)
+
+        dist_r2 = distance_r2(MNIST_X_10_pred_2D, MNIST_X_10_test_2D)
+        distances.append(dist_r2)
+        
+        # provide progress output
+        if ((i%10) == 0):
+            print(f'finished {i} rounds: {dist_r2}', end="\r")
+
+    return distances
+```
+
+### K-Nearest Neighbour
+
+We'll run our simulation with different values of $K$ for the KNN method and then use plotly to plot the results
+
+Run the process
+```python
+knn_distances = {}
+max_k = 10
+for k in range(1, max_k):
+    print("k="+str(k))
+    model1 = KNeighborsRegressor(n_neighbors=k, weights='distance', n_jobs=-1)
+  
+    knn_distances[k] = measure_distances(model1, None, number_of_trials=max_trials)
+    print() 
+```
+Organize everything into a long dataframe
+```python
+model_type = []
+observation = []
+k_values = []
+
+for distance in lr_distances:
+    model_type.append("LinearRegression")
+    observation.append(distance)
+    k_values.append(0)
+    
+for k in knn_distances:
+    for distance in knn_distances[k]:
+        model_type.append(f'KNN({k})')
+        observation.append(distance)
+        k_values.append(k)
+        
+knn_df = pd.DataFrame({"Model_Type": model_type,
+                       "Observation": observation,
+                       "K_value": k_values})
+```
+And finally, plot
+```python
+unique_models = knn_df["Model_Type"].unique()
+
+fig = go.Figure()
+for model in unique_models:
+    mask = knn_df["Model_Type"] == model
+    k_values = knn_df["K_value"][mask]
+    k = k_values.iloc[0]
+    if (k == 0):
+        color = f'rgb(0,255,255)'
+    else:
+        r = 255
+        g = b = 255-int(255*(k-1)/max_k)
+        color = f'rgb({r},{g},{b})'
+    fig.add_trace(go.Violin(x=knn_df['Model_Type'][mask],
+                            y=knn_df['Observation'][mask],
+                            name=model,
+                            box_visible=False,
+                            meanline_visible=True,
+                            fillcolor=color,
+                            line_color="black",
+                            opacity=1.0,
+                            hoverinfo='y'))
+    
+fig.update_yaxes(range=[0.25, 1.0])
+plotly.offline.iplot(fig)
+```
 <iframe width="900" height="500" src="/assets/plotly/KNN_distance.html"></iframe>
