@@ -562,3 +562,161 @@ Overall linear regressions are performing better than support vector machines, i
 ## Profiling the Run-Time for Different Regressors
 
 The dataset is actually quite large, so we will do all our prototyping on 10% of it
+
+```python
+mnist_percent = 0.1
+X_index = np.random.choice(list(range(MNIST_X.shape[0])), size=int(MNIST_X.shape[0]*mnist_percent))
+
+MNIST_X_10 = MNIST_X[X_index]
+MNIST_Y_10 = MNIST_Y[X_index]
+
+print(MNIST_X_10.shape)
+print(MNIST_Y_10.shape)
+```
+
+We are going to sample 10%, 20%,..., 100% of the dataset and profile the performance of our regressors in dimensionality reduction recreation. Let's build a function that will do that for us.
+
+```python
+# t-SNE takes waaaaaaaay too long on this dataset, so we'll t-SNE once and cashe the results
+
+tsne_cashe = {}
+
+def measure_run_times(model1, model2, MNIST_X, MNIST_Y, sample_size, number_of_trials=1000):
+    run_times = []
+    
+    key1 = (0, sample_size)
+    
+    # sample the dataset
+    current_data_X_index = np.random.choice(list(range(MNIST_X.shape[0])), 
+                                            size=sample_size)
+
+    current_data_X = MNIST_X[current_data_X_index]
+    current_data_Y = MNIST_Y[current_data_X_index]
+    
+    
+    for i in range(number_of_trials):
+        # grab the tSNE results    
+        if ((i % 50) == 0):
+            if (key1 not in tsne_cashe):
+                tSNE = TSNE(n_components=2, angle=1.0)
+
+                X_2D = tSNE.fit_transform(current_data_X)
+                tsne_cashe[key1] = X_2D
+            else:
+                X_2D = tsne_cashe[key1]
+            key1 = (key1[0]+1, sample_size)
+        
+        # train/test split
+        MNIST_X_train, MNIST_X_test, _, _ = train_test_split(current_data_X, 
+                                                             current_data_Y, 
+                                                             test_size=0.2, 
+                                                             random_state=i)
+        
+        MNIST_X_train_2D, MNIST_X_test_2D, _, _ = train_test_split(X_2D, 
+                                                                   current_data_Y, 
+                                                                   test_size=0.2, 
+                                                                   random_state=i)
+        # try and use one model, if it fails use two        
+        try:
+            start_time = time.clock()
+            model1.fit(MNIST_X_train, MNIST_X_train_2D)
+            MNIST_X_pred_2D = model1.predict(MNIST_X_test) 
+        except ValueError:
+            
+            start_time = time.clock()
+            
+            model1.fit(MNIST_X_train, MNIST_X_train_2D[:, 0])
+            model2.fit(MNIST_X_train, MNIST_X_train_2D[:, 1])
+
+            MNIST_X_pred_2D = np.zeros(MNIST_X_test_2D.shape, MNIST_X_test_2D.dtype)
+
+            MNIST_X_pred_2D[:, 0] = model1.predict(MNIST_X_test)
+            MNIST_X_pred_2D[:, 1] = model2.predict(MNIST_X_test)
+
+        end_time = time.clock()
+        run_times.append(end_time-start_time)
+
+        if ((i%10) == 0):
+            print("finished "+str(i+1)+" rounds",X_2D.shape, end="\r")
+
+    return run_times
+```
+
+Then define another function to collect a set of run times for us
+
+```python
+def collect_run_times(model1, model2):
+    run_times = {}
+    
+    # look at 10%, 20%, ... 100%
+    for i in range(10,110,10):
+        fraction_percent = i/100.0
+
+        sample_size = int(MNIST_X_10.shape[0]*fraction_percent)
+        print(f'{sample_size} data points/{i}%')
+        run_times[sample_size] = measure_run_times(model1, model2, 
+                                               MNIST_X_10, MNIST_Y_10, 
+                                               sample_size,
+                                               number_of_trials=100)
+        print()
+    
+    return run_times
+```
+
+and finally let's plot the results
+```python
+def plot_run_times(run_times_dict, series_name, c, fig=None):
+    # define lists for our x, y and error bars
+    x = []
+    y = []
+    y_err = []
+
+    # x is our sample size
+    # y is our average run time
+    # error bars are the run time STDEV
+    for sample_size in run_times_dict:
+        run_times = run_times_dict[sample_size]
+        x.append(sample_size)
+        y.append(np.mean(run_times))
+        y_err.append(np.std(run_times))
+
+    # either create the figure, or add to an existing one
+    if (fig is None):
+        fig = go.Figure(data=go.Scatter(x=x, y=y,
+        error_y=dict(
+            type='data', # value of error bar given in data coordinates
+            array=y_err,
+            visible=True),
+        name=series_name,
+        marker = {"color": c,
+                  "line": {"color":c}}
+        ))
+    else:
+        fig.add_trace(go.Scatter(x=x, y=y,
+            error_y=dict(
+                type='data', # value of error bar given in data coordinates
+                array=y_err,
+                visible=True),
+            name=series_name,
+            marker = {"color": c,
+                      "line": {"color":c}}
+        ))
+    
+    # Finally plot
+    plotly.offline.iplot(fig)
+    
+    # return figure for reuse and adding more things to it
+    return fig
+```
+
+Now we can employ all our functions
+
+### Linear Regression
+```python
+model1 = Lasso()
+run_times_lr = collect_run_times(model1, None)
+fig = plot_run_times(run_times_lr, "Linear Regression", "rgb(0,230,230)", None)
+```
+
+<iframe width="900" height="500" frameborder="0" src="/assets/plotly/Linear Regression run times.html"></iframe>
+
