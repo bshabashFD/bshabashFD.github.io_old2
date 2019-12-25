@@ -473,4 +473,4 @@ fig.update_yaxes(range=[0.0, 1.0])
 fig.update_xaxes(tickangle=45)
 plotly.offline.iplot(fig)
 ```
-<iframe width="900" height="500" frameborder="0" src="/assets/plotly/DT_distance.html"></iframe>
+<iframe width="900" height="500" frameborder="0" src="/assets/plotly/DT_distances.html"></iframe>
