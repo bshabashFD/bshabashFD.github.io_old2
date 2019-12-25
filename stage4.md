@@ -481,3 +481,78 @@ The decision trees seem to perform in a comparable fashion to the linear regress
 
 We will also explore linear SVMs to see how they perform relative to a linear regression
 
+```python
+from sklearn.svm import LinearSVR
+
+
+max_C_exp = 6
+min_C_exp = -5
+max_C_list = list(range(min_C_exp, max_C_exp))
+
+svm_distances = {}
+
+
+
+for c in max_C_list:
+    print("c="+str(c))
+    # Here we have to use two models of the same type
+    model1 = LinearSVR(C=10**c, epsilon=0.1)
+    model2 = LinearSVR(C=10**c, epsilon=0.1)
+
+    svm_distances[c] = measure_distances(model1, model2, number_of_trials=max_trials)
+    print()
+```
+```python
+model_type = []
+observation = []
+SVM_values = []
+
+for distance in lr_distances:
+    model_type.append("LinearRegression")
+    observation.append(distance)
+    SVM_values.append(-1000)
+    
+for c in svm_distances:
+    for distance in svm_distances[c]:
+        model_type.append(f'SVM(10^{c})')
+        observation.append(distance)
+        SVM_values.append(c)
+        
+svm_df = pd.DataFrame({"Model_Type": model_type,
+                       "Observation": observation,
+                       "SVM_value": SVM_values})
+```
+```python
+unique_models = svm_df["Model_Type"].unique()
+
+fig = go.Figure()
+for model in unique_models:
+    mask = svm_df["Model_Type"] == model
+    #print(model)
+    c_values = svm_df["SVM_value"][mask]
+    c = c_values.iloc[0]
+    if (c == -1000):
+        color = f'rgb(0,255,255)'
+    else:
+        r = g = 255-int(255*(c - min_C_exp + 1)/(max_C_exp - min_C_exp))
+        b = 255
+        color = f'rgb({r},{g},{b})'
+    fig.add_trace(go.Violin(x=svm_df['Model_Type'][mask],
+                            y=svm_df['Observation'][mask],
+                            name=model,
+                            box_visible=False,
+                            meanline_visible=True,
+                            fillcolor=color,
+                            line_color="black",
+                            opacity=1.0,
+                            hoverinfo='y'))
+fig.update_yaxes(range=[-0.4, 1.0])
+plotly.offline.iplot(fig)
+```
+<iframe width="900" height="500" frameborder="0" src="/assets/plotly/SVR_distance.html"></iframe>
+SVM methods do not seem to offer an improvement to the distance-$R^2$, and in some cases are doing quite poorly.
+
+### Analysis
+
+
+Overall linear regressions are performing better than support vector machines, in a comparable way to decision trees, and are being outperformed by K-Nearest Neighbour models. It might be tempting then to consider KNN as our internal regressors for improved tSNE. However, aside from performance, we should probably profile each regressor type on a larger dataset.
