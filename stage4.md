@@ -474,3 +474,10 @@ fig.update_xaxes(tickangle=45)
 plotly.offline.iplot(fig)
 ```
 <iframe width="900" height="500" frameborder="0" src="/assets/plotly/DT_distances.html"></iframe>
+
+The decision trees seem to perform in a comparable fashion to the linear regression, but with a wider distribution of values
+
+### Linear Support Vector Machines
+
+We will also explore linear SVMs to see how they perform relative to a linear regression
+
