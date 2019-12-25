@@ -473,7 +473,7 @@ fig.update_yaxes(range=[0.0, 1.0])
 fig.update_xaxes(tickangle=45)
 plotly.offline.iplot(fig)
 ```
-<iframe width="900" height="500" frameborder="0" src="/assets/plotly/DT_distances.html"></iframe>
+<iframe width="900" height="500" frameborder="0" src="/assets/plotly/DT_distance.html"></iframe>
 
 The decision trees seem to perform in a comparable fashion to the linear regression, but with a wider distribution of values
 
