@@ -737,6 +737,7 @@ model1 = DecisionTreeRegressor()
 run_times_dt = collect_run_times(model1, None)
 fig = plot_run_times(run_times_dt, "Decision Tree", "rgb(101, 67, 33)",fig)
 ```
+
 <iframe width="900" height="500" frameborder="0" src="/assets/plotly/Decision Tree run times.html"></iframe>
 
 
