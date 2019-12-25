@@ -396,3 +396,81 @@ This is somewhat better. The distance-$R^2$ values center around 0.86.
 This method seems better at estimating the positions, but it can be lacking in interpretability, and scales in order of $O(n^2 d)$ in relation to the number of data points $n$ and the number of features $d$. Let's try decision trees:
 
 ### Decision Trees
+
+For decision trees, we will try different depth caps, including no depth cap:
+
+```python
+max_depth = 21
+max_depth_list = list(range(1, max_depth, 3))
+max_depth_list.append(None)
+
+tree_distances = {}
+
+
+
+for depth in max_depth_list:
+    print("depth="+str(depth))
+    model1 = DecisionTreeRegressor(max_depth=depth)
+    
+    if (depth is not None):
+        tree_distances[depth] = measure_distances(model1, None, number_of_trials=max_trials)
+    else:
+        tree_distances[-1] = measure_distances(model1, None, number_of_trials=max_trials)
+    
+    print()
+```
+```python
+model_type = []
+observation = []
+DT_values = []
+
+for distance in lr_distances:
+    model_type.append("LinearRegression")
+    observation.append(distance)
+    DT_values.append(0)
+    
+for depth in tree_distances:
+    for distance in tree_distances[depth]:
+        if (depth == -1):
+            model_type.append(f'DT(None)')
+        else:
+            model_type.append(f'DT({depth})')
+        observation.append(distance)
+        DT_values.append(depth)
+        
+dt_df = pd.DataFrame({"Model_Type": model_type,
+                      "Observation": observation,
+                      "DT_value": DT_values})
+```
+```python
+unique_models = dt_df["Model_Type"].unique()
+
+fig = go.Figure()
+for model in unique_models:
+    mask = dt_df["Model_Type"] == model
+    depth_values = dt_df["DT_value"][mask]
+    depth = depth_values.iloc[0]
+    if (depth == 0):
+        color = f'rgb(0,255,255)'
+    elif (depth == -1):
+        r = 255
+        g = 255
+        b = 255
+    else:
+        r = b = 255-int(255*(depth-1)/max_depth)
+        g = 255
+        color = f'rgb({r},{g},{b})'
+    fig.add_trace(go.Violin(x=dt_df['Model_Type'][mask],
+                            y=dt_df['Observation'][mask],
+                            name=model,
+                            box_visible=False,
+                            meanline_visible=True,
+                            fillcolor=color,
+                            line_color="black",
+                            opacity=1.0,
+                            hoverinfo='y'))
+fig.update_yaxes(range=[0.0, 1.0])
+fig.update_xaxes(tickangle=45)
+plotly.offline.iplot(fig)
+```
+<iframe width="900" height="500" frameborder="0" src="/assets/plotly/DT_distance.html"></iframe>
