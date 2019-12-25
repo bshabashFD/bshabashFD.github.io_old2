@@ -732,4 +732,22 @@ fig = plot_run_times(run_times_knn, "KNN", "rgb(255,0,0)",fig)
 
 ### Decision Trees
 
+```python
+model1 = DecisionTreeRegressor()
+run_times_dt = collect_run_times(model1, None)
+fig = plot_run_times(run_times_dt, "Decision Tree", "rgb(101, 67, 33)",fig)
+```
+<iframe width="900" height="500" frameborder="0" src="/assets/plotly/Decision Tree run times.html"></iframe>
+
+
 ### Linear Support Vector Machines
+
+```python
+model1 = LinearSVR()
+model2 = LinearSVR()
+
+run_times_svm = collect_run_times(model1, model2)
+
+fig = plot_run_times(run_times_svm, "SVM","rgb(0,0,255)", fig)
+```
+<iframe width="900" height="500" frameborder="0" src="/assets/plotly/SVM run times.html"></iframe>
