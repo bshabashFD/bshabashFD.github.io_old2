@@ -70,11 +70,11 @@ np.random.seed(0)
 mnist_percent = 0.02
 X_index = np.random.choice(list(range(MNIST_X.shape[0])), size=int(MNIST_X.shape[0]*mnist_percent))
 
-MNIST_X_10 = MNIST_X[X_index]
-MNIST_Y_10 = MNIST_Y[X_index]
+MNIST_X_2 = MNIST_X[X_index]
+MNIST_Y_2 = MNIST_Y[X_index]
 
-print(MNIST_X_10.shape)
-print(MNIST_Y_10.shape)
+print(MNIST_X_2.shape)
+print(MNIST_Y_2.shape)
 
 ```
 
@@ -97,7 +97,7 @@ tSNE = TSNE(n_components=2,
             angle=0.3,
             verbose=1)
 
-MNIST_X_10_2D = tSNE.fit_transform(MNIST_X_10)
+MNIST_X_2_2D = tSNE.fit_transform(MNIST_X_2)
 ```
 
 Let's define a function to easily plot the data:
@@ -125,7 +125,7 @@ def plot_MNIST(MNIST_x, MNIST_y):
     plt.show();
 ```
 ```python
-plot_MNIST(MNIST_X_10_2D, MNIST_Y_10)
+plot_MNIST(MNIST_X_2_2D, MNIST_Y_2)
 ```
 
 <img src="/assets/images/rtSNE.svg" />
@@ -137,12 +137,12 @@ This is the result of tSNE when it is run on a dataset for dimensionality reduct
 Now let's consider our scenario of interest. We will use the MNIST data again, and split it into a train and a test datasets.
 
 ```python
-MNIST_X_10_train, MNIST_X_10_test, MNIST_Y_10_train, MNIST_Y_10_test = train_test_split(MNIST_X_10, 
-                                                                        MNIST_Y_10, 
+MNIST_X_2_train, MNIST_X_2_test, MNIST_Y_2_train, MNIST_Y_2_test = train_test_split(MNIST_X_2, 
+                                                                        MNIST_Y_2, 
                                                                         test_size=0.33, 
                                                                         random_state=1)
-MNIST_X_10_train_2D, MNIST_X_10_test_2D, MNIST_Y_10_train, MNIST_Y_10_test = train_test_split(MNIST_X_10_2D, 
-                                                                              MNIST_Y_10, 
+MNIST_X_2_train_2D, MNIST_X_2_test_2D, MNIST_Y_2_train, MNIST_Y_2_test = train_test_split(MNIST_X_2_2D, 
+                                                                              MNIST_Y_2, 
                                                                               test_size=0.33, 
                                                                               random_state=1)
 ```
@@ -154,7 +154,7 @@ At this point it's important to define our independent variables and our depende
 First, let's look at the training data, we will only use the y data to colour the three different digits
 
 ```python
-plot_MNIST(MNIST_X_10_train_2D, MNIST_Y_10_train)
+plot_MNIST(MNIST_X_2_train_2D, MNIST_Y_2_train)
 ```
 
 <img src="/assets/images/rtSNE2_train.svg" />
@@ -162,7 +162,7 @@ plot_MNIST(MNIST_X_10_train_2D, MNIST_Y_10_train)
 Now let's plot the test data:
 
 ```python
-plot_MNIST(MNIST_X_10_test_2D, MNIST_Y_10_test)
+plot_MNIST(MNIST_X_2_test_2D, MNIST_Y_2_test)
 ```
 
 <img src="/assets/images/rtSNE2_test.svg" />
@@ -172,8 +172,8 @@ Now let's create our linear regression to learn the mapping function. I'm using 
 
 ```python
 my_lr = Lasso()
-my_lr.fit(MNIST_X_10_train, MNIST_X_10_train_2D)
-MNIST_X_10_pred_2D = my_lr.predict(MNIST_X_10_test) 
+my_lr.fit(MNIST_X_2_train, MNIST_X_2_train_2D)
+MNIST_X_2_pred_2D = my_lr.predict(MNIST_X_2_test) 
 ```
 
 We're going to develop an equivalent measure of the $R^2$ value, but for distances. Simply put, we will calculate
@@ -190,7 +190,7 @@ def distance_r2(X_pred, X_true):
     return 1- (u/v)
 ```
 ```python
-distance_r2(MNIST_X_10_pred_2D, MNIST_X_10_test_2D)
+distance_r2(MNIST_X_2_pred_2D, MNIST_X_2_test_2D)
 ```
 ```
 0.4635027691570044
@@ -218,15 +218,15 @@ for i in range(max_trials):
                     n_iter=1000, 
                     angle=0.3)
 
-        MNIST_X_2D = tSNE.fit_transform(MNIST_X_10)
+        MNIST_X_2D = tSNE.fit_transform(MNIST_X_2)
 
     # split the source data and the embedding
-    MNIST_X_train, MNIST_X_test, MNIST_Y_train, MNIST_Y_test = train_test_split(MNIST_X_10, 
-                                                                                MNIST_Y_10, 
+    MNIST_X_train, MNIST_X_test, MNIST_Y_train, MNIST_Y_test = train_test_split(MNIST_X_2, 
+                                                                                MNIST_Y_2, 
                                                                                 test_size=0.2, 
                                                                                 random_state=i)
     MNIST_X_train_2D, MNIST_X_test_2D, MNIST_Y_train, MNIST_Y_test = train_test_split(MNIST_X_2D, 
-                                                                                      MNIST_Y_10, 
+                                                                                      MNIST_Y_2, 
                                                                                       test_size=0.2, 
                                                                                       random_state=i)
   
@@ -289,34 +289,34 @@ def measure_distances(model1, model2, number_of_trials=10000):
                         n_iter=1000, 
                         angle=0.3)
 
-            MNIST_X_10_2D = tSNE.fit_transform(MNIST_X_10)
+            MNIST_X_2_2D = tSNE.fit_transform(MNIST_X_2)
 
         # split the source data and the embedding
-        MNIST_X_10_train, MNIST_X_10_test, MNIST_Y_10_train, MNIST_Y_10_test = train_test_split(MNIST_X_10, 
-                                                                                MNIST_Y_10, 
+        MNIST_X_2_train, MNIST_X_2_test, MNIST_Y_2_train, MNIST_Y_2_test = train_test_split(MNIST_X_2, 
+                                                                                MNIST_Y_2, 
                                                                                 test_size=0.2, 
                                                                                 random_state=i)
-        MNIST_X_10_train_2D, MNIST_X_10_test_2D, MNIST_Y_10_train, MNIST_Y_10_test = train_test_split(MNIST_X_10_2D, 
-                                                                                      MNIST_Y_10, 
+        MNIST_X_2_train_2D, MNIST_X_2_test_2D, MNIST_Y_2_train, MNIST_Y_2_test = train_test_split(MNIST_X_2_2D, 
+                                                                                      MNIST_Y_2, 
                                                                                       test_size=0.2, 
                                                                                       random_state=i)
         
         # create the embedding mapping
         try:
-            model1.fit(MNIST_X_10_train, MNIST_X_10_train_2D)
-            MNIST_X_10_pred_2D = model1.predict(MNIST_X_10_test)
+            model1.fit(MNIST_X_2_train, MNIST_X_2_train_2D)
+            MNIST_X_2_pred_2D = model1.predict(MNIST_X_2_test)
         except ValueError:
             # go here if the regressor cannot accept multiple outputs
             
-            model1.fit(MNIST_X_10_train, MNIST_X_10_train_2D[:, 0])
-            model2.fit(MNIST_X_10_train, MNIST_X_10_train_2D[:, 1])
+            model1.fit(MNIST_X_2_train, MNIST_X_2_train_2D[:, 0])
+            model2.fit(MNIST_X_2_train, MNIST_X_2_train_2D[:, 1])
 
-            MNIST_X_10_pred_2D = np.zeros(MNIST_X_10_test_2D.shape, MNIST_X_10_test_2D.dtype)
+            MNIST_X_2_pred_2D = np.zeros(MNIST_X_2_test_2D.shape, MNIST_X_2_test_2D.dtype)
 
-            MNIST_X_10_pred_2D[:, 0] = model1.predict(MNIST_X_10_test)
-            MNIST_X_10_pred_2D[:, 1] = model2.predict(MNIST_X_10_test)
+            MNIST_X_2_pred_2D[:, 0] = model1.predict(MNIST_X_2_test)
+            MNIST_X_2_pred_2D[:, 1] = model2.predict(MNIST_X_2_test)
 
-        dist_r2 = distance_r2(MNIST_X_10_pred_2D, MNIST_X_10_test_2D)
+        dist_r2 = distance_r2(MNIST_X_2_pred_2D, MNIST_X_2_test_2D)
         distances.append(dist_r2)
         
         # provide progress output
@@ -556,4 +556,9 @@ SVM methods do not seem to offer an improvement to the distance-$R^2$, and in so
 ### Analysis
 
 
-Overall linear regressions are performing better than support vector machines, in a comparable way to decision trees, and are being outperformed by K-Nearest Neighbour models. It might be tempting then to consider KNN as our internal regressors for improved tSNE. However, aside from performance, we should probably profile each regressor type on a larger dataset.
+Overall linear regressions are performing better than support vector machines, in a comparable way to decision trees, and are being outperformed by K-Nearest Neighbour models. It might be tempting then to consider KNN as our internal regressors for improved tSNE. However, aside from performance, we should probably profile each regressor's run time.
+
+
+## Profiling the Run-Time for Different Regressors
+
+The dataset is actually quite large, so we will do all our prototyping on 10% of it
