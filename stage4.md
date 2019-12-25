@@ -391,3 +391,8 @@ fig.update_yaxes(range=[0.25, 1.0])
 plotly.offline.iplot(fig)
 ```
 <iframe width="900" height="500" frameborder="0" src="/assets/plotly/KNN_distance.html"></iframe>
+
+This is somewhat better. The distance-$R^2$ values center around 0.86.
+This method seems better at estimating the positions, but it can be lacking in interpretability, and scales in order of $O(n^2 d)$ in relation to the number of data points $n$ and the number of features $d$. Let's try decision trees:
+
+### Decision Trees
