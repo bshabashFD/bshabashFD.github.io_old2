@@ -271,4 +271,4 @@ We will try a few models:
 
 ## bla
 
-<iframe width="900" height="500" src="/assets/plotly/KNN_distance.html"></iframe>
+<iframe width="900" height="600" src="/assets/plotly/KNN_distance.html"></iframe>
