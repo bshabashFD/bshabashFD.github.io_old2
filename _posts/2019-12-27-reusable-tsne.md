@@ -18,7 +18,7 @@ tSNE works by finding an embedding in an $m$ dimensional space from an $n$ dimen
 
 $$\Phi(\vec{X}) = \vec{X}'$$
 
-Where $\vec{X} \in {\rm I\!R}^n$ and $\vec{X}' \in {\rm I\!R}^m$
+Where $\vec{X} \in {\rm R}^n$ and $\vec{X}' \in {R}^m$
 
 If such a mapping exists, then for a reduction to $m$ dimensional space, we could employ a linear regression to find this mapping.
 
