@@ -364,6 +364,7 @@ knn_df = pd.DataFrame({"Model_Type": model_type,
 ```
 And finally, plot
 ```python
+knn_df['Model_Type'][knn_df['Model_Type'] == 'LinearRegression'] = 'LASSO'
 unique_models = knn_df["Model_Type"].unique()
 
 fig = go.Figure()
@@ -386,7 +387,12 @@ for model in unique_models:
                             line_color="black",
                             opacity=1.0,
                             hoverinfo='y'))
-    
+fig.update_layout(title={'text': "Distance-R^2 Distributions for LASSO regression",
+                         'x':0.5,
+                         'xanchor': 'center',
+                         'yanchor': 'top'},
+                  xaxis_title="Model Type (KNN(n_neighbors))",
+                  yaxis_title="Distance R^2 Distributions")
 fig.update_yaxes(range=[0.25, 1.0])
 plotly.offline.iplot(fig)
 ```
