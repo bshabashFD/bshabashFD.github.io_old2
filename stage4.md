@@ -348,7 +348,7 @@ observation = []
 k_values = []
 
 for distance in lr_distances:
-    model_type.append("LinearRegression")
+    model_type.append("LASSO")
     observation.append(distance)
     k_values.append(0)
     
@@ -364,7 +364,6 @@ knn_df = pd.DataFrame({"Model_Type": model_type,
 ```
 And finally, plot
 ```python
-knn_df['Model_Type'][knn_df['Model_Type'] == 'LinearRegression'] = 'LASSO'
 unique_models = knn_df["Model_Type"].unique()
 
 fig = go.Figure()
@@ -431,7 +430,7 @@ observation = []
 DT_values = []
 
 for distance in lr_distances:
-    model_type.append("LinearRegression")
+    model_type.append("LASSO")
     observation.append(distance)
     DT_values.append(0)
     
@@ -475,6 +474,12 @@ for model in unique_models:
                             line_color="black",
                             opacity=1.0,
                             hoverinfo='y'))
+fig.update_layout(title={'text': "Distance-R^2 Distributions for LASSO regression and Decision Tree Models",
+                         'x':0.5,
+                         'xanchor': 'center',
+                         'yanchor': 'top'},
+                  xaxis_title="Model Type (Decision Tree(max_depth))",
+                  yaxis_title="Distance R^2 Distributions")
 fig.update_yaxes(range=[0.0, 1.0])
 fig.update_xaxes(tickangle=45)
 plotly.offline.iplot(fig)
@@ -514,7 +519,7 @@ observation = []
 SVM_values = []
 
 for distance in lr_distances:
-    model_type.append("LinearRegression")
+    model_type.append("LASSO")
     observation.append(distance)
     SVM_values.append(-1000)
     
@@ -552,6 +557,12 @@ for model in unique_models:
                             line_color="black",
                             opacity=1.0,
                             hoverinfo='y'))
+fig.update_layout(title={'text': "Distance-R^2 Distributions for LASSO regression and SVM Models",
+                         'x':0.5,
+                         'xanchor': 'center',
+                         'yanchor': 'top'},
+                  xaxis_title="Model Type (SVM(regularization))",
+                  yaxis_title="Distance R^2 Distributions")
 fig.update_yaxes(range=[-0.4, 1.0])
 plotly.offline.iplot(fig)
 ```
