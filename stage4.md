@@ -1126,3 +1126,20 @@ plot_MNIST(MNIST_X_2_reduced, MNIST_Y_2)
 ```
 
 <img src="/assets/images/two_percent_plotted.svg" />
+
+... and the learned embedding can then be applied to the entire dataset
+
+```python
+mnist_percent = 0.1
+X_index = np.random.choice(list(range(MNIST_X.shape[0])), size=int(MNIST_X.shape[0]*mnist_percent))
+
+MNIST_X_10 = MNIST_X[X_index]
+MNIST_Y_10 = MNIST_Y[X_index]
+
+X_reduced = my_repeatable_tSNE.transform(MNIST_X_10)
+```
+```python
+plot_MNIST(X_reduced, MNIST_Y_10)
+```
+
+<img src="/assets/images/ten_percent_plotted.svg" />
