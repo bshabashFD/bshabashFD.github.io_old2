@@ -718,7 +718,13 @@ def plot_run_times(run_times_dict, series_name, c, fig=None):
             marker = {"color": c,
                       "line": {"color":c}}
         ))
-    
+    # Decorate the plot with the appropriate titles
+    fig.update_layout(title={'text': "Average Model Run-times",
+                             'x':0.5,
+                             'xanchor': 'center',
+                             'yanchor': 'top'},
+                  xaxis_title="Number of Data Points",
+                  yaxis_title="Average Run-time")
     # Finally plot
     plotly.offline.iplot(fig)
     
