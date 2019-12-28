@@ -1,9 +1,9 @@
-import sklearn.manifold.TSNE
+from sklearn.manifold import TSNE
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.neighbors import KNeighborsRegressor
 
 
-class rtSNE(sklearn.manifold.TSNE):
+class rtSNE(TSNE):
     '''
     repeatable t-distributed Stochastic Neighbor Embedding.
     
