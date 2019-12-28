@@ -2,9 +2,6 @@
 layout: default
 ---
 
-<h1>The Blog</h1>
-
-Welcome to my lab where I share my experiments!
 
 <div class="posts">
   {% for post in site.posts %}
