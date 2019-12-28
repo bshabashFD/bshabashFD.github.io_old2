@@ -788,7 +788,7 @@ As a result, we shall design a repeatable tSNE which can use both decision trees
 
 We will use subclassing to create the repeatable tSNE, as an rtSNE class, which is a subclass of `sklearn.manifold.TSNE`. The class will accept several additional parameters to control for the estimator to evaluate the mapping.
 
-<a href="/assets/python/rtSNE.py" download>Download rtSNE.py</a>
+<a href="https://github.com/bshabashFD/rtSNE" target="_blank">Download rtSNE.py</a>
 
 This code is quite heavily documented since it contains some hyper-parameters from `sklearn.manifold.TSNE`, `sklearn.tree.DecisionTreeRegressor`, and `from sklearn.neighbors.KNeighborsRegressor`.
 
