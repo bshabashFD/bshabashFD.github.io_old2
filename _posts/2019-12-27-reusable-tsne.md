@@ -6,8 +6,7 @@ image: re-do_logo.png
 ---
 
 
-<br>
-<br>
+In this post we will explore several ways to modify tSNE to allow for repeatable use.
 
 ## Dimensionality Reduction, PCA, and tSNE
 Dimensionality reduction is a technique often employed for visualization purposes. The method of choice used to be Principle Component Analysis (PCA), but since its arrival on the scene, t-Distribution Stochastic Neighborhood Embedding (t-SNE) has been gaining popularity due to its improved performance in maintaining distance-based relationships between data points from the high dimensional space. 
