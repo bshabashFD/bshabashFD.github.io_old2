@@ -13,7 +13,7 @@ Dimensionality reduction is a technique often employed for visualization purpose
 
 However, while tSNE offers advantages in performance, its mode of operation prevents it from being used on train-test splits. tSNE requires the information for all data points at once, and rather than find a transformation like PCA, it simply finds an embedding in the low dimensional space which optimizes the Kullback–Leibler divergence.
 
-The methodology behind tSNE is explained extremely well in [this](https://www.youtube.com/watch?v=RJVL80Gg3lA) Google talk by its inventor Laurens van der Maaten. So I will skip into my proposed methodology to fix the issue. This blog post focuses on creating a reproducible wrapper around tSNE (using the scikit-learn implementation).
+The methodology behind tSNE is explained extremely well in <a href="https://www.youtube.com/watch?v=RJVL80Gg3lA" target="_blank">this</a> Google talk by its inventor Laurens van der Maaten. So I will skip into my proposed methodology to fix the issue. This blog post focuses on creating a reproducible wrapper around tSNE (using the scikit-learn implementation).
 
 
 ## The Methodology
