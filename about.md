@@ -17,3 +17,6 @@ sanity tests and for analysis that can detect when the machine is wrong.</p>
 
 <p> I don't see machines learning replacing humans, I see it working side
 by side with us.</p>
+
+<p>For a comprehensive list of my skills as well as publications, please 
+<a href="/assets/documents/Boris Shabash Resume.pdf" download>download my resume here</a></p>
