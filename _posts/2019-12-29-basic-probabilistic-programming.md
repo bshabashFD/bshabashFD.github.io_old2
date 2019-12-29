@@ -231,13 +231,17 @@ mcmc.summary(prob=0.95)
 ```
     
 
-Not such a great result... 100 observations is not really enough to settle on a good outcome. The distribution does not seem to center around a particular value, and when we ask for the 95% credibility interval our mean can lie anywhere between 79% and 93%. This may or may not be accurate enough for our purposes.
+Not such a great result... 100 observations is not really enough to settle on a good outcome. 
+The distribution does not seem to center around a particular value, and when we ask for the 
+95% credibility interval our mean can lie anywhere between 79% and 93%. This may or may not 
+be accurate enough for our purposes.
 
 Let's see how confident we can be in our model when we use all 14,000 observations.
 
 ### Modifying Our Model
 
-If we run all 14,000 observations through the same model, it would take a very long time to run. This is because we cycle through each observation in our code:
+If we run all 14,000 observations through the same model, it would take a very long time to run. 
+This is because we cycle through each observation in our code:
 
 ```python
 for i in range(len(y)):
@@ -251,7 +255,8 @@ for i in range(len(y)):
 
 Pyro contains a more convenient, vectorized, method of approaching our model.
 
-First, we redefine our model function such that it accepts NO observations, but rather it returns its own observations
+First, we redefine our model function such that it accepts NO observations, but rather it 
+returns its own observations
 
 
 ```python
@@ -279,7 +284,9 @@ def model2():
         
 ```
 
-Now, we defined a second function that takes as input a model function, and observations, and utilizes `pyro.poutine` to run the model function in a conditioned environment. It's important our observations here have the same name ("obs") as they do in the model function.
+Now, we defined a second function that takes as input a model function, and observations, 
+and utilizes `pyro.poutine` to run the model function in a conditioned environment. It's 
+important our observations here have the same name ("obs") as they do in the model function.
 
 
 ```python
@@ -288,7 +295,8 @@ def conditioned_model(model, y):
     return conditioned_model_function()
 ```
 
-Finally, we re-run the MCMC sampler, but now with our conditioned model, and we send our model function, as well as our observations, as arguments
+Finally, we re-run the MCMC sampler, but now with our conditioned model, and we send our model 
+function, as well as our observations, as arguments
 
 
 ```python
