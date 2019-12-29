@@ -333,7 +333,7 @@ plt.show();
 ```
 
 
-![svg](assets/images/large_distributions.svg)
+![svg](/assets/images/large_distributions.svg)
 
 
 ```python
@@ -361,7 +361,7 @@ plt.show()
 ```
 
 
-![svg](assets/images/two_distributions.svg)
+![svg](/assets/images/two_distributions.svg)
 
 
 Notice these are both posterior distributions plotted, which are supported entirely by the 
