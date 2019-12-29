@@ -233,7 +233,7 @@ mcmc.summary(prob=0.95)
 
 Not such a great result... 100 observations is not really enough to settle on a good outcome. 
 The distribution does not seem to center around a particular value, and when we ask for the 
-95% credibility interval our mean can lie anywhere between 79% and 93%. This may or may not 
+95% credibility interval our true value can lie anywhere between 79% and 93%. This may or may not 
 be accurate enough for our purposes.
 
 Let's see how confident we can be in our model when we use all 14,000 observations.
@@ -348,8 +348,8 @@ mcmc2.summary(prob=0.95)
 ```
     
 
-Now we can get a much tighter fit around the 87% mark. Just to compare the two distributions 
-we got consider them plotted together.
+Now we can get a much tighter fit around the 87% mark. Just to compare the two distributions, 
+we could plot them together.
 
 
 ```python
@@ -365,6 +365,6 @@ plt.show()
 
 
 Notice these are both posterior distributions plotted, which are supported entirely by the 
-evidence collected. If the first case (100 examples), the results would not be conclusive 
+evidence collected. If in the first case (100 examples), the results would not be conclusive 
 enough, this would be a very strong rational to label more examples so that an acceptable 
 credibility interval is derived.
