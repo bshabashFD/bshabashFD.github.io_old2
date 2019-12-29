@@ -125,7 +125,9 @@ from pyro.infer.mcmc import HMC, MCMC
 assert pyro.__version__.startswith('1.1.0')
 ```
 
-First we need to define our observations for Pyro. In our case, our observations are the cases where we see correct and incorrect classification. Let's consider both the small test set (100 observations) and the large test set (14,000) observations.
+First we need to define our observations for Pyro. In our case, our observations are the 
+cases where we see correct and incorrect classification. Let's consider both the small test 
+set (100 observations) and the large test set (14,000 observations).
 
 
 ```python
@@ -216,7 +218,7 @@ plt.show();
 ```
 
 
-![png](output_21_0.png)
+![svg](/assets/images/small_distributions.svg)
 
 ```python
 mcmc.summary(prob=0.95)
