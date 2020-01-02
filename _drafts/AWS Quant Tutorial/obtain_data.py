@@ -1,3 +1,4 @@
+import sys
 import re
 import os
 import pandas as pd
@@ -211,9 +212,13 @@ def output_stock_df_to_csv(stock_df, output_directory):
         logging.warning('data not written')
 ##################################################################
 if __name__ == "__main__":
-
     # Initialize a log file
     logging.basicConfig(filename='pipeline.log', filemode="w", level=logging.DEBUG)
+
+    if not (sys.version[:3] >= "3.6"):
+        logging.error("Incorrect Python version found, requires 3.6+, found "+sys.version)
+    
+    
 
     # Get our command line arumgnets
     args = parse_command_line_arguments()
