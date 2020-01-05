@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sys
 import re
 import os
@@ -215,11 +216,10 @@ if __name__ == "__main__":
     # Initialize a log file
     logging.basicConfig(filename='pipeline.log', filemode="w", level=logging.DEBUG)
 
+    print(sys.version)
     if not (sys.version[:3] >= "3.6"):
         logging.error("Incorrect Python version found, requires 3.6+, found "+sys.version)
     
-    
-
     # Get our command line arumgnets
     args = parse_command_line_arguments()
 
@@ -231,10 +231,10 @@ if __name__ == "__main__":
 
     # If a toekn was obtained we can get the stock data and write it to file
     if (auth_token is not None):
-        STOCK_ID = args.stock_id
+            STOCK_ID = args.stock_id
+            
+            stock_df = get_stock_data(STOCK_ID, start_date, end_date, auth_token)
 
-        stock_df = get_stock_data(STOCK_ID, start_date, end_date, auth_token)
-
-        output_directory = args.output_directory+STOCK_ID+".csv"
-        output_stock_df_to_csv(stock_df, output_directory)
+            output_directory = output_directory+STOCK_ID+".csv"
+            output_stock_df_to_csv(stock_df, output_directory)
     
