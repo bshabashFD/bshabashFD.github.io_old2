@@ -235,6 +235,6 @@ if __name__ == "__main__":
             
             stock_df = get_stock_data(STOCK_ID, start_date, end_date, auth_token)
 
-            output_directory = output_directory+STOCK_ID+".csv"
+            output_directory = args.output_directory+STOCK_ID+".csv"
             output_stock_df_to_csv(stock_df, output_directory)
     
