@@ -134,6 +134,10 @@ def get_stock_data(STOCK_ID, start_time, end_time, auth_code):
         the_data = StringIO(csv_content)
         stock_df = pd.read_csv(the_data)
 
+        stock_df['Return'] = (stock_df['Close'] - stock_df['Open'])/stock_df['Open']
+        print(stock_df.head())
+        assert(False)
+
         logging.info('Stock data found')
         return stock_df
     else:
@@ -235,7 +239,7 @@ if __name__ == "__main__":
     logging.basicConfig(filename='pipeline.log', filemode="w", level=logging.DEBUG)
 
     # make a spark session
-    create_spark_session()
+    ####create_spark_session()
 
     print(sys.version)
     if not (sys.version[:3] >= "3.6"):
