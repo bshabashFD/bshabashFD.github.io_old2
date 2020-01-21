@@ -3,6 +3,7 @@ import sys
 import re
 import os
 import pandas as pd
+import numpy as np
 import requests
 from io import StringIO
 from datetime import datetime
@@ -134,11 +135,27 @@ def get_stock_data(STOCK_ID, start_time, end_time, auth_code):
         the_data = StringIO(csv_content)
         stock_df = pd.read_csv(the_data)
 
-        stock_df['Return'] = (stock_df['Close'] - stock_df['Open'])/stock_df['Open']
-        print(stock_df.head())
-        assert(False)
-
         logging.info('Stock data found')
+
+        stock_df.drop('Adj Close', axis=1, inplace=True)
+
+        stock_df['Return'] = (stock_df['Close'] - stock_df['Open'])/stock_df['Open']
+
+        for column in ['Open', 'Close', 'High', 'Low', 'Volume']:
+            stock_df[f'{column}_pct'] = stock_df[column].pct_change()
+            stock_df.drop(column, axis=1, inplace=True)
+
+        stock_df['Return'] = stock_df['Return'].shift(-1)
+        stock_df['Target'] = np.where(stock_df['Return'] > 0.0, 1.0, 0.0)
+        stock_df.drop(['Return', 'Date'], axis=1, inplace=True)
+
+        
+        
+        
+        stock_df.dropna(inplace=True)
+
+
+        logging.info('Stock data processed')
         return stock_df
     else:
         logging.warning('Stock data not found')
@@ -229,7 +246,7 @@ def output_stock_df_to_csv(stock_df, output_directory):
     '''
     logging.info('Outputting dataframe to csv file')
     if (stock_df is not None):        
-        stock_df.to_csv(output_directory)
+        stock_df.to_csv(output_directory, index=False)
         logging.info(f'data written to {output_directory}')
     else:
         logging.warning('data not written')
@@ -239,7 +256,7 @@ if __name__ == "__main__":
     logging.basicConfig(filename='pipeline.log', filemode="w", level=logging.DEBUG)
 
     # make a spark session
-    ####create_spark_session()
+    create_spark_session()
 
     print(sys.version)
     if not (sys.version[:3] >= "3.6"):
