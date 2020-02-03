@@ -74,19 +74,15 @@ def get_stock_data(STOCK_URL):
 
     Parameters:
     ------------
-    STOCK_ID (string) - The asset for which data is requested
+    STOCK_URL (string) - The asset for which data is requested
                         (e.g. AAPL, MSFT)
-    start_time (int) -  The start time as an epoch time (e.g. 1420229214)
-    end_time (int) -    The end time as an epoch time
-    auth_code (string) -The authentication code used to make 
-                        the request valid for Yahoo Finance
 
     Returns:
     -----------
     a pandas.core.DataFrame of the stock historic
     data if successful, None otherwise
     '''
-    logging.info(f'Obtaining data for symbol {STOCK_ID}')
+    logging.info(f'Obtaining data for symbol {STOCK_URL}')
 
     # Grab the data
     
@@ -182,6 +178,6 @@ if __name__ == "__main__":
     
     stock_df = get_stock_data(STOCK_URL)
 
-    output_directory = args.output_directory+STOCK_ID+"_processed.csv"
+    output_directory = args.output_directory+STOCK_URL+"_processed.csv"
     output_stock_df_to_csv(stock_df, output_directory)
     
