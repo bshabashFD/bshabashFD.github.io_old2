@@ -124,8 +124,8 @@ def parse_command_line_arguments():
 
     # Make a parser and parse the arguments
     parser = argparse.ArgumentParser(description='Obtain Data From Yahoo Finance.')
-    parser.add_argument('stock_id', help='The symbol of the asset to retrieve')
-    parser.add_argument('--output_directory', help='The output directory for the data in .csv format')
+    parser.add_argument('stock_url', help='The symbol of the asset to retrieve')
+    parser.add_argument('--output_directory', help='The output directory for the data')
     args = parser.parse_args()
 
     # If our output directory is empty, make it an empty string.
@@ -178,10 +178,10 @@ if __name__ == "__main__":
 
     # If a toekn was obtained we can get the stock data and write it to file
     if (auth_token is not None):
-            STOCK_ID = args.stock_id
+            STOCK_URL = args.stock_url
             
-            stock_df = get_stock_data(STOCK_ID, start_date, end_date, auth_token)
+            stock_df = get_stock_data(STOCK_URL)
 
-            output_directory = args.output_directory+STOCK_ID+".csv"
+            output_directory = args.output_directory+STOCK_ID+"_processed.csv"
             output_stock_df_to_csv(stock_df, output_directory)
     
