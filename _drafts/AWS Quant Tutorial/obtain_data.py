@@ -10,8 +10,8 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import argparse
 import time
-from pyspark.sql import SparkSession
-from pyspark.sql import functions as F
+#from pyspark.sql import SparkSession
+#from pyspark.sql import functions as F
 
 
 import logging
@@ -256,7 +256,7 @@ if __name__ == "__main__":
     logging.basicConfig(filename='pipeline.log', filemode="w", level=logging.DEBUG)
 
     # make a spark session
-    create_spark_session()
+    #create_spark_session()
 
     print(sys.version)
     if not (sys.version[:3] >= "3.6"):
