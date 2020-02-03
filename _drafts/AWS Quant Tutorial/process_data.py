@@ -176,12 +176,12 @@ if __name__ == "__main__":
     args = parse_command_line_arguments()
 
 
-    # If a toekn was obtained we can get the stock data and write it to file
-    if (auth_token is not None):
-            STOCK_URL = args.stock_url
-            
-            stock_df = get_stock_data(STOCK_URL)
+    # We can get the stock data and write it to file
 
-            output_directory = args.output_directory+STOCK_ID+"_processed.csv"
-            output_stock_df_to_csv(stock_df, output_directory)
+    STOCK_URL = args.stock_url
+    
+    stock_df = get_stock_data(STOCK_URL)
+
+    output_directory = args.output_directory+STOCK_ID+"_processed.csv"
+    output_stock_df_to_csv(stock_df, output_directory)
     
