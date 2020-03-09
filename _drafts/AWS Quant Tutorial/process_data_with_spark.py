@@ -6,13 +6,16 @@ import numpy as np
 import argparse
 import time
 
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 
 
 from pyspark.ml.feature import VectorAssembler
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
-from pyspark.ml.classification import DecisionTreeClassifier
+from pyspark.ml.classification import DecisionTreeClassifier as SparkDecisionTreeClassifier
+from pyspark.mllib.tree import DecisionTree, DecisionTreeModel
+from pyspark.mllib.regression import LabeledPoint
 from pyspark import SparkContext
 
 
@@ -29,7 +32,8 @@ def create_spark_session():
     Returns:
         spark (SparkSession) - spark session connected to AWS EMR cluster
     '''
-    spark = SparkSession.builder.appName('BorisApp').getOrCreate()
+    spark = SparkSession.builder.config("spark.jars.packages", 
+                                        "org.apache.hadoop:hadoop-aws:2.7.0").getOrCreate()
     
     return spark
 
@@ -118,27 +122,48 @@ if __name__ == "__main__":
     
     stock_df = get_stock_data(STOCK_FILE)
 
-    df_double_times = 15
+    df_double_times = 0
     if stock_df is not None:
+        for i in range(df_double_times): #15
+            stock_df = pd.concat([stock_df, stock_df])
+        
+
+        y = stock_df['Target'].copy().values.reshape(-1, 1)
+        X = stock_df
+        X.drop('Target', axis=1, inplace=True)
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+        print(y.shape)
+        start_time = time.process_time()
+        my_dt = DecisionTreeClassifier(min_samples_leaf=2)
+        my_dt.fit(X_train,y_train)
+        y_pred = my_dt.predict(X_test)
+        end_time = time.process_time()
+
+        delta_time = end_time - start_time
+
+        print(stock_df.shape)
+        print(delta_time/60.0)
+
+        
+        
+        
+        
+        
         
         print("starting Spark'ing")
+        sc = spark.sparkContext
 
+        del stock_df
         stock_df = get_stock_data(STOCK_FILE)
-        print('doubling')
         for i in range(df_double_times): #15
-            print(f'doubling {i+1}')
-            #spark_stock_df = spark_stock_df.union(spark_stock_df)
             stock_df = pd.concat([stock_df, stock_df])
-        print('doubled')
 
         #https://towardsdatascience.com/machine-learning-with-pyspark-and-mllib-solving-a-binary-classification-problem-96396065d2aa
-        print('creating spark df')
-        spark_stock_df = spark.createDataFrame(stock_df)
-        
-        
 
+        '''spark_stock_df = spark.createDataFrame(stock_df)
         spark_stock_df.printSchema()
-        
 
         df_columns = spark_stock_df.columns
         df_columns.remove('Target')
@@ -147,40 +172,56 @@ if __name__ == "__main__":
         spark_stock_df = assembler.transform(spark_stock_df)
         spark_stock_df.printSchema()
 
-        train, test = spark_stock_df.randomSplit([0.8, 0.2], seed = 1)
-
-        print('repartitioning')
-        train = train.repartition(10)
-        test = test.repartition(10)
-        print(f'train partition number: {train.rdd.getNumPartitions()}')
-        print(f'test partition number: {test.rdd.getNumPartitions()}')
-        print(f'train size: {train.count()}')
-        print(f'test size: {test.count()}')
-        
+        train, test = spark_stock_df.randomSplit([0.8, 0.2], seed = 1)'''
+        df_columns = list(stock_df.columns)
+        df_columns.remove('Target')
+        spark_points = stock_df.apply(lambda x: LabeledPoint(x['Target'], x[df_columns].values), 
+                                      axis=1)
+        #spark_points = stock_df.apply(lambda x: LabeledPoint(x['Target'], x[df_columns].values))
+        #print(spark_points.values)
         #exit()
+        data = spark_points.values
+        train_data, test_data, _, _ = train_test_split(data, data, test_size=0.2)
 
-        start_time = time.time()
+
+
+        train = sc.parallelize(train_data)
+
+        # Have to turn test_data into vectors rather than label points (only features)
+        print(test_data[0])
+        print(test_data[0].features)
+        print(dir(test_data[0]))
+        new_test_data = []
+        for l_point in test_data:
+            new_test_data.append(l_point.features)
+        test = sc.parallelize(new_test_data)
+
+
+        start_time = time.process_time()
         print("Creating tree")
-        dt = DecisionTreeClassifier(featuresCol = 'features', 
-                                    labelCol = 'Target', 
-                                    maxDepth=5,
-                                    maxMemoryInMB=2048,
-                                    cacheNodeIds=True,
-                                    minInstancesPerNode=2)
+        #dt = SparkDecisionTreeClassifier(featuresCol = 'features', 
+        #                                 labelCol = 'Target', 
+        #                                 maxMemoryInMB=2048,
+        #                                 minInstancesPerNode=2)
         print("Fitting")
+        dtModel = DecisionTree.trainClassifier(train, 
+                                               numClasses=2,
+                                               categoricalFeaturesInfo={},
+                                               minInstancesPerNode=2)
 
         
-        dtModel = dt.fit(train)
+        #dtModel = dt.fit(train)
         print("Predicting")
-        predictions = dtModel.transform(test)
-        
-        end_time = time.time()
+        predictions = dtModel.predict(test).collect()
+        #predictions = dtModel.transform(test)
         print("Showing Predictions")
-        predictions.printSchema()
-        predictions.select('rawPrediction', 'prediction', 'probability').show(20)
+        #predictions.printSchema()
+        #predictions.select('rawPrediction', 'prediction', 'probability').show(10)
+        print(predictions)
+        end_time = time.process_time()
 
         delta_time = end_time - start_time
 
-        print(f'run-time: {delta_time/60.0}') 
+        print(delta_time/60.0) 
         print("ending Spark'ing")
     

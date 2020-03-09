@@ -1,0 +1,17 @@
+[
+  {
+    "Classification": "yarn-site",
+    "Properties": {
+      "yarn.scheduler.minimum-allocation-mb": "1024",
+	  "yarn.scheduler.maximum-allocation-mb": "8192",
+	  "yarn.nodemanager.resource.memory-mb": "8192"
+    }
+  },
+  {
+    "Classification": "mapred-site",
+    "Properties": {
+      "mapreduce.map.memory.mb": "4096",
+      "mapreduce.reduce.memory.mb": "4096"
+    }
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "Classification": "yarn-site",
+    "Properties": {
+      "yarn.scheduler.minimum-allocation-mb": "1024",
+	  "yarn.scheduler.maximum-allocation-mb": "30384",
+	  "yarn.nodemanager.resource.memory-mb": "30384",
+	  "yarn.nodemanager.vmem-check-enabled": "false",
+	  "yarn.nodemanager.pmem-check-enabled": "false"
+    }
+  }
+]

@@ -6,15 +6,12 @@ import numpy as np
 import argparse
 import time
 
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 
 
-from pyspark.ml.feature import VectorAssembler
-from pyspark.sql import SparkSession
-from pyspark.sql import functions as F
-from pyspark.ml.classification import DecisionTreeClassifier
-from pyspark import SparkContext
 
+from pyspark.sql import SparkSession
 
 import logging
 
@@ -121,66 +118,36 @@ if __name__ == "__main__":
     df_double_times = 15
     if stock_df is not None:
         
-        print("starting Spark'ing")
 
         stock_df = get_stock_data(STOCK_FILE)
-        print('doubling')
         for i in range(df_double_times): #15
             print(f'doubling {i+1}')
-            #spark_stock_df = spark_stock_df.union(spark_stock_df)
             stock_df = pd.concat([stock_df, stock_df])
         print('doubled')
 
-        #https://towardsdatascience.com/machine-learning-with-pyspark-and-mllib-solving-a-binary-classification-problem-96396065d2aa
-        print('creating spark df')
-        spark_stock_df = spark.createDataFrame(stock_df)
+
         
-        
+        y = stock_df['Target']
+        stock_df.drop('Target', axis=1, inplace=True)
+        X = stock_df
 
-        spark_stock_df.printSchema()
-        
+        X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2)
 
-        df_columns = spark_stock_df.columns
-        df_columns.remove('Target')
-        print(df_columns)
-        assembler = VectorAssembler(inputCols=df_columns, outputCol="features")
-        spark_stock_df = assembler.transform(spark_stock_df)
-        spark_stock_df.printSchema()
 
-        train, test = spark_stock_df.randomSplit([0.8, 0.2], seed = 1)
 
-        print('repartitioning')
-        train = train.repartition(10)
-        test = test.repartition(10)
-        print(f'train partition number: {train.rdd.getNumPartitions()}')
-        print(f'test partition number: {test.rdd.getNumPartitions()}')
-        print(f'train size: {train.count()}')
-        print(f'test size: {test.count()}')
-        
-        #exit()
 
+        print('Creating Random Forest')
         start_time = time.time()
-        print("Creating tree")
-        dt = DecisionTreeClassifier(featuresCol = 'features', 
-                                    labelCol = 'Target', 
-                                    maxDepth=5,
-                                    maxMemoryInMB=2048,
-                                    cacheNodeIds=True,
-                                    minInstancesPerNode=2)
-        print("Fitting")
+        my_rf = DecisionTreeClassifier(max_depth=30,
+                                       min_samples_leaf=2)
 
-        
-        dtModel = dt.fit(train)
-        print("Predicting")
-        predictions = dtModel.transform(test)
-        
+        my_rf.fit(X_train, y_train)
+
+        y_pred = my_rf.predict(X_test)
+
         end_time = time.time()
-        print("Showing Predictions")
-        predictions.printSchema()
-        predictions.select('rawPrediction', 'prediction', 'probability').show(20)
-
+        
         delta_time = end_time - start_time
 
         print(f'run-time: {delta_time/60.0}') 
-        print("ending Spark'ing")
     

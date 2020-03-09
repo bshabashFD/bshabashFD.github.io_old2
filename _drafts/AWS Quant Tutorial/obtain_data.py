@@ -10,26 +10,11 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import argparse
 import time
-#from pyspark.sql import SparkSession
-#from pyspark.sql import functions as F
 
 
 import logging
 
 
-
-
-def create_spark_session():
-    '''
-    taken from https://towardsdatascience.com/production-data-processing-with-apache-spark-96a58dfd3fe7
-    Create spark session.
-        
-    Returns:
-        spark (SparkSession) - spark session connected to AWS EMR cluster
-    '''
-    spark = SparkSession.builder.config("spark.jars.packages", 
-                                        "org.apache.hadoop:hadoop-aws:2.7.0").getOrCreate()
-    return spark
 
 ##################################################################
 def attempt_getting_token(asset, attempt):

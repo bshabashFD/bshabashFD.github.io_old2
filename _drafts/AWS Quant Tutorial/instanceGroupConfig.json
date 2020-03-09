@@ -1,0 +1,20 @@
+[
+  {
+    "InstanceCount": 1,
+    "Name": "master",
+	"InstanceType": "m5.2xlarge",
+    "InstanceGroupType": "MASTER"
+  },
+  {
+    "InstanceCount": 1,
+    "Name": "core",
+	"InstanceType": "m5.2xlarge",
+    "InstanceGroupType": "CORE"
+  },
+  {
+    "InstanceCount": 2,
+    "Name": "task",
+	"InstanceType": "m5.2xlarge",
+    "InstanceGroupType": "TASK"
+  }
+]

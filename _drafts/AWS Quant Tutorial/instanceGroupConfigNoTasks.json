@@ -1,0 +1,8 @@
+[
+  {
+    "InstanceCount": 1,
+    "Name": "master",
+	"InstanceType": "m5.2xlarge",
+    "InstanceGroupType": "MASTER"
+  }
+]

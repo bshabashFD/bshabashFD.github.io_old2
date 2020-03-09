@@ -118,24 +118,22 @@ if __name__ == "__main__":
     
     stock_df = get_stock_data(STOCK_FILE)
 
-    df_double_times = 15
+    df_double_times = 5
     if stock_df is not None:
         
         print("starting Spark'ing")
 
         stock_df = get_stock_data(STOCK_FILE)
-        print('doubling')
-        for i in range(df_double_times): #15
-            print(f'doubling {i+1}')
-            #spark_stock_df = spark_stock_df.union(spark_stock_df)
-            stock_df = pd.concat([stock_df, stock_df])
-        print('doubled')
 
         #https://towardsdatascience.com/machine-learning-with-pyspark-and-mllib-solving-a-binary-classification-problem-96396065d2aa
         print('creating spark df')
         spark_stock_df = spark.createDataFrame(stock_df)
-        
-        
+
+        print('doubling')
+        for i in range(df_double_times): #15
+            print(f'doubling {i+1}')
+            spark_stock_df = spark_stock_df.union(spark_stock_df)
+        print('doubled')
 
         spark_stock_df.printSchema()
         
@@ -149,21 +147,15 @@ if __name__ == "__main__":
 
         train, test = spark_stock_df.randomSplit([0.8, 0.2], seed = 1)
 
-        print('repartitioning')
         train = train.repartition(10)
-        test = test.repartition(10)
-        print(f'train partition number: {train.rdd.getNumPartitions()}')
-        print(f'test partition number: {test.rdd.getNumPartitions()}')
-        print(f'train size: {train.count()}')
-        print(f'test size: {test.count()}')
-        
-        #exit()
+        print(train.rdd.getNumPartitions())
+        exit()
 
         start_time = time.time()
         print("Creating tree")
         dt = DecisionTreeClassifier(featuresCol = 'features', 
                                     labelCol = 'Target', 
-                                    maxDepth=5,
+                                    maxDepth=30,
                                     maxMemoryInMB=2048,
                                     cacheNodeIds=True,
                                     minInstancesPerNode=2)
